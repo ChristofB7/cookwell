@@ -1,118 +1,166 @@
+import 'package:cookwell/widgets/recipe_menu.dart';
+import 'package:cookwell/widgets/shopping_menu.dart';
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(MyApp());
-}
+void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blue,
-        // This makes the visual density adapt to the platform that you run
-        // the app on. For desktop platforms, the controls will be smaller and
-        // closer together (more dense) than on mobile platforms.
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
-      //rand
+      theme: _buildShrineTheme(),
+      title: 'CookWell',
+      home: MyHomePage(),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
-
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+  List<Widget> _pages;
+  Widget _gorceryMenu;
+  Widget _shoppingMenu;
 
-  void _incrementCounter() {
+  int _currentIndex;
+  Widget _currentPage;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _gorceryMenu = RecipeMenu();
+    _shoppingMenu = ShoppingMenu();
+
+    _pages = [_gorceryMenu, _shoppingMenu];
+
+    _currentIndex = 0;
+    _currentPage = _gorceryMenu;
+  }
+
+  void changeTab(int index) {
     setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
+      _currentIndex = index;
+      _currentPage = _pages[index];
     });
   }
 
-  @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
     return Scaffold(
       appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
+        title: const Text('Cookwell'),
       ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-          ],
+      drawer: new Drawer(
+        child: new Container(
+          margin: EdgeInsets.only(top: 20.0),
+          child: new Column(
+            children: <Widget>[
+              navigationItemListTitle("Recipes", 0),
+              navigationItemListTitle("Shopping", 1),
+            ],
+          ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      body: _currentPage,
+      bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
+        currentIndex: _currentIndex,
+        backgroundColor: colorScheme.surface,
+        selectedItemColor: colorScheme.onSurface,
+        unselectedItemColor: colorScheme.onSurface.withOpacity(.60),
+        selectedLabelStyle: textTheme.caption,
+        unselectedLabelStyle: textTheme.caption,
+        onTap: (index) => changeTab(index),
+        items: [
+          BottomNavigationBarItem(
+            // make constant
+            label: 'Recipes',
+            icon: Icon(Icons.fastfood_rounded),
+          ),
+          BottomNavigationBarItem(
+            label: 'Shopping',
+            icon: Icon(Icons.list),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget navigationItemListTitle(String title, int index) {
+    return new ListTile(
+      title: new Text(
+        title,
+        style: new TextStyle(color: Colors.blue[400], fontSize: 22.0),
+      ),
+      onTap: () {
+        Navigator.pop(context);
+        changeTab(index);
+      },
     );
   }
 }
+
+ThemeData _buildShrineTheme() {
+  final ThemeData base = ThemeData.light();
+  return base.copyWith(
+    colorScheme: _shrineColorScheme,
+    textTheme: _buildShrineTextTheme(base.textTheme),
+  );
+}
+
+TextTheme _buildShrineTextTheme(TextTheme base) {
+  return base
+      .copyWith(
+        caption: base.caption.copyWith(
+          fontWeight: FontWeight.w400,
+          fontSize: 14,
+          letterSpacing: defaultLetterSpacing,
+        ),
+        button: base.button.copyWith(
+          fontWeight: FontWeight.w500,
+          fontSize: 14,
+          letterSpacing: defaultLetterSpacing,
+        ),
+      )
+      .apply(
+        fontFamily: 'Rubik',
+        displayColor: shrineBrown900,
+        bodyColor: shrineBrown900,
+      );
+}
+
+const ColorScheme _shrineColorScheme = ColorScheme(
+  primary: shrinePink100,
+  primaryVariant: shrineBrown900,
+  secondary: shrinePink50,
+  secondaryVariant: shrineBrown900,
+  surface: shrineSurfaceWhite,
+  background: shrineBackgroundWhite,
+  error: shrineErrorRed,
+  onPrimary: shrineBrown900,
+  onSecondary: shrineBrown900,
+  onSurface: shrineBrown900,
+  onBackground: shrineBrown900,
+  onError: shrineSurfaceWhite,
+  brightness: Brightness.light,
+);
+
+const Color shrinePink50 = Color(0xFFFEEAE6);
+const Color shrinePink100 = Color(0xFFFEDBD0);
+const Color shrinePink300 = Color(0xFFFBB8AC);
+const Color shrinePink400 = Color(0xFFEAA4A4);
+
+const Color shrineBrown900 = Color(0xFF442B2D);
+const Color shrineBrown600 = Color(0xFF7D4F52);
+
+const Color shrineErrorRed = Color(0xFFC5032B);
+
+const Color shrineSurfaceWhite = Color(0xFFFFFBFA);
+const Color shrineBackgroundWhite = Colors.white;
+
+const defaultLetterSpacing = 0.03;
