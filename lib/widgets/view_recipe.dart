@@ -20,11 +20,7 @@ class ViewRecipe extends StatelessWidget {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Card(
-            child: ListTile(
-              leading: Container(
-                height: 50,
-                width: 50,
+            Container(
                 decoration: BoxDecoration(
                   color: colorScheme.surface,
                 ),
@@ -33,12 +29,10 @@ class ViewRecipe extends StatelessWidget {
                     fit: BoxFit.fill,
                   ),
                 ),
-              subtitle: Text(
+             Text(
                   'Serving Size: ${recipe.servingSize.toStringAsFixed(0)}\n'
                   'Prep Time: ${recipe.prepTime.inMinutes} minutes\n'
                   'Cooking Time: ${recipe.cookingTime.inMinutes} minutes'),
-            ),
-          ),
           ListView(
             shrinkWrap: true,
             scrollDirection: Axis.vertical,
