@@ -1,5 +1,6 @@
-import 'package:cookwell/widgets/recipe_menu.dart';
+import 'package:cookwell/widgets/cookbook_menu.dart';
 import 'package:cookwell/widgets/shopping_menu.dart';
+import 'package:cookwell/widgets/view_recipe.dart';
 import 'package:flutter/material.dart';
 
 void main() => runApp(MyApp());
@@ -8,9 +9,12 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: _buildShrineTheme(),
+      theme: _buildColorTheme(),
       title: 'CookWell',
       home: MyHomePage(),
+      routes: {
+        '/view-recipe' : (context) => ViewRecipe()
+      },
     );
   }
 }
@@ -22,7 +26,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   List<Widget> _pages;
-  Widget _gorceryMenu;
+  Widget _groceryMenu;
   Widget _shoppingMenu;
 
   int _currentIndex;
@@ -32,13 +36,13 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
 
-    _gorceryMenu = RecipeMenu();
+    _groceryMenu = RecipeMenu();
     _shoppingMenu = ShoppingMenu();
 
-    _pages = [_gorceryMenu, _shoppingMenu];
+    _pages = [_groceryMenu, _shoppingMenu];
 
     _currentIndex = 0;
-    _currentPage = _gorceryMenu;
+    _currentPage = _groceryMenu;
   }
 
   void changeTab(int index) {
@@ -54,6 +58,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Cookwell'),
+        backgroundColor: ColorTheme.primary,
       ),
       drawer: new Drawer(
         child: new Container(
@@ -79,7 +84,7 @@ class _MyHomePageState extends State<MyHomePage> {
         items: [
           BottomNavigationBarItem(
             // make constant
-            label: 'Recipes',
+            label: 'My Cookbook',
             icon: Icon(Icons.fastfood_rounded),
           ),
           BottomNavigationBarItem(
@@ -95,7 +100,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return new ListTile(
       title: new Text(
         title,
-        style: new TextStyle(color: Colors.blue[400], fontSize: 22.0),
+        style: new TextStyle(color: Theme.of(context).colorScheme.secondaryVariant, fontSize: 22.0),
       ),
       onTap: () {
         Navigator.pop(context);
@@ -105,15 +110,16 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-ThemeData _buildShrineTheme() {
+//TODO
+ThemeData _buildColorTheme() {
   final ThemeData base = ThemeData.light();
   return base.copyWith(
-    colorScheme: _shrineColorScheme,
-    textTheme: _buildShrineTextTheme(base.textTheme),
+    colorScheme: ColorTheme,
+    textTheme: _buildTextTheme(base.textTheme),
   );
 }
 
-TextTheme _buildShrineTextTheme(TextTheme base) {
+TextTheme _buildTextTheme(TextTheme base) {
   return base
       .copyWith(
         caption: base.caption.copyWith(
@@ -129,38 +135,36 @@ TextTheme _buildShrineTextTheme(TextTheme base) {
       )
       .apply(
         fontFamily: 'Rubik',
-        displayColor: shrineBrown900,
-        bodyColor: shrineBrown900,
+        displayColor: charcoal,
+        bodyColor: charcoal,
       );
 }
 
-const ColorScheme _shrineColorScheme = ColorScheme(
-  primary: shrinePink100,
-  primaryVariant: shrineBrown900,
-  secondary: shrinePink50,
-  secondaryVariant: shrineBrown900,
-  surface: shrineSurfaceWhite,
-  background: shrineBackgroundWhite,
-  error: shrineErrorRed,
-  onPrimary: shrineBrown900,
-  onSecondary: shrineBrown900,
-  onSurface: shrineBrown900,
-  onBackground: shrineBrown900,
-  onError: shrineSurfaceWhite,
+const ColorScheme ColorTheme = ColorScheme(
+  primary: charcoal,
+  primaryVariant: queenBlue,
+  secondary: englishLavender,
+  secondaryVariant: queenPink,
+  surface: surfaceColor,
+  background: darkSkyBlue,
+  error: errorRed,
+  onPrimary: englishLavender,
+  onSecondary: englishLavender,
+  onSurface: englishLavender,
+  onBackground: englishLavender,
+  onError: surfaceColor,
   brightness: Brightness.light,
 );
 
-const Color shrinePink50 = Color(0xFFFEEAE6);
-const Color shrinePink100 = Color(0xFFFEDBD0);
-const Color shrinePink300 = Color(0xFFFBB8AC);
-const Color shrinePink400 = Color(0xFFEAA4A4);
+const Color darkSkyBlue = Color(0xFF8CB1B9);
+const Color queenBlue = Color(0xFF33658A);
+const Color charcoal = Color(0xFF2F4858);
+const Color queenPink = Color(0xFFE2C2C6);
+const Color englishLavender = Color(0xFFB9929F);
 
-const Color shrineBrown900 = Color(0xFF442B2D);
-const Color shrineBrown600 = Color(0xFF7D4F52);
+const Color errorRed = Color(0xFFC5032B);
 
-const Color shrineErrorRed = Color(0xFFC5032B);
+const Color surfaceColor = Color(0xFFF9F8FE);
+const Color backgroundWhite = Colors.white;
 
-const Color shrineSurfaceWhite = Color(0xFFFFFBFA);
-const Color shrineBackgroundWhite = Colors.white;
-
-const defaultLetterSpacing = 0.03;
+const defaultLetterSpacing = 0.02;
