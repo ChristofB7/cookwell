@@ -141,17 +141,17 @@ TextTheme _buildTextTheme(TextTheme base) {
 }
 
 const ColorScheme ColorTheme = ColorScheme(
-  primary: charcoal,
+  primary: shadowBlue,
   primaryVariant: queenBlue,
-  secondary: englishLavender,
-  secondaryVariant: queenPink,
+  secondary: middleGray,
+  secondaryVariant: blackChocolate,
   surface: surfaceColor,
-  background: darkSkyBlue,
+  background: ivory,
   error: errorRed,
-  onPrimary: englishLavender,
-  onSecondary: englishLavender,
-  onSurface: englishLavender,
-  onBackground: englishLavender,
+  onPrimary: russett,
+  onSecondary: slateColor,
+  onSurface: shadowBlue,
+  onBackground: middleGray,
   onError: surfaceColor,
   brightness: Brightness.light,
 );
@@ -159,8 +159,16 @@ const ColorScheme ColorTheme = ColorScheme(
 const Color darkSkyBlue = Color(0xFF8CB1B9);
 const Color queenBlue = Color(0xFF33658A);
 const Color charcoal = Color(0xFF2F4858);
-const Color queenPink = Color(0xFFE2C2C6);
-const Color englishLavender = Color(0xFFB9929F);
+const Color cornsilk = Color(0xFFFEFAE0);
+const Color cultured = Color(0xFFF3F3F3);
+const Color mintCream = Color(0xFFF7FFFD);
+const Color slateColor = Color(0xFF628395);
+const Color middleGray = Color(0xFF96897B);
+const Color blackChocolate = Color(0xFF23231A);
+const Color shadowBlue = Color(0xFF7286A0);
+const Color russett = Color(0xFF895737);
+const Color liverOrgan = Color(0xFF5E3023);
+const Color ivory = Color(0xFFF6F7EB);
 
 const Color errorRed = Color(0xFFC5032B);
 

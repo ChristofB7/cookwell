@@ -8,8 +8,9 @@ class RecipeMenu extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
-    return Container(
-      child: ListView(
+    return Scaffold(
+      backgroundColor: colorScheme.background,
+      body: ListView(
         scrollDirection: Axis.horizontal,
         children: dummy_recipes
             .map((recipe) => GestureDetector(
