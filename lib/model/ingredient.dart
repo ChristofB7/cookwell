@@ -9,7 +9,7 @@ class Ingredient {
 
   Ingredient({@required this.name, this.unit, @required this.amount});
 
-  String toString(){
-    return '${amount % 1 == 0 ? amount.toStringAsFixed(0) : amount.toStringAsFixed(1)} ${unit == null ? '' : unit.toString().substring(unit.toString().indexOf('.') + 1)} ${name}';
+  String toString() {
+    return '${amount % 1 == 0 ? amount.toStringAsFixed(0) : amount.toStringAsFixed(1)} ${unit == null ? '' : unit.toString().substring(unit.toString().indexOf('.') + 1)} $name';
   }
 }

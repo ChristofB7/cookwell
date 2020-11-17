@@ -14,4 +14,5 @@ enum Unit {
   liter
 // Convert to enum
 // Fruit f = Fruit.values.firstWhere((e) => e.toString() == str);
+
 }
