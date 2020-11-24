@@ -16,7 +16,6 @@ class ViewRecipe extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: colorScheme.background,
-      //Single Child Scroll View to allow user to scroll through the page
       body: CustomScrollView(
         slivers: <Widget>[
           SliverAppBar(
@@ -111,7 +110,7 @@ class ViewRecipe extends StatelessWidget {
                 //Card with Serving Size, Prep Time, and Cooking Time
                 //Spaced using a Flex, and Flexible children
                 //Could probably be optimized?
-
+                //<div>Icons made by <a href="https://www.flaticon.com/authors/eucalyp" title="Eucalyp">Eucalyp</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
                 Divider(
                   thickness: 3,
                   indent: 20,
@@ -121,7 +120,10 @@ class ViewRecipe extends StatelessWidget {
                 //ListView containing both ingreidnets and directions
                 Text(
                   "Ingredients",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                  style: TextStyle(
+                      fontFamily: 'Roboto',
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold),
                 ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -130,10 +132,15 @@ class ViewRecipe extends StatelessWidget {
                       .map((ingredient) => Row(
                             children: [
                               //Image - this will be the image of the ingreidents
-                              Image(
-                                  height: 40,
-                                  width: 30,
-                                  image: recipe.image.image),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                // Icon made by https://www.flaticon.com/authors/eucalyp Eucalyp.
+                                child: ImageIcon(
+                                  AssetImage(
+                                      'lib/assets/images/vegetarian.png'),
+                                  size: 30,
+                                ),
+                              ),
                               //Expanded to take up as much space as possible
                               Expanded(
                                 child: Row(
@@ -192,7 +199,10 @@ class ViewRecipe extends StatelessWidget {
                 //Directions Text followed by
                 Text(
                   "Directions",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                  style: TextStyle(
+                      fontFamily: 'Roboto',
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold),
                 ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -204,7 +214,7 @@ class ViewRecipe extends StatelessWidget {
                             child: Text(
                               '${direction.key + 1}. ${direction.value}',
                               style: TextStyle(
-                                fontWeight: FontWeight.normal,
+                                fontFamily: 'Vice City',
                                 color: Theme.of(context)
                                     .colorScheme
                                     .secondaryVariant,
