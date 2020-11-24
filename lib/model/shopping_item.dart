@@ -28,4 +28,20 @@ class ShoppingItem {
     checked = map[ShoppingDatabaseProvider.COLUMN_CHECKED] == 1;
   }
 
+  static Future<String> createShoppingList() async {
+    List<ShoppingItem> list = await ShoppingDatabaseProvider.getUncheckedItems();
+
+    String sharableList = "";
+
+    for (ShoppingItem item in list) {
+      sharableList += item.toString();
+    }
+
+    return sharableList;
+  }
+
+  String toString(){
+    return ("${this.item} ${this.quantity == 0 ? "" : "(${this.quantity})"}\n");
+  }
+
 }

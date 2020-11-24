@@ -114,8 +114,6 @@ class ShoppingDatabaseProvider {
         quantity: item.quantity,
         checked: !item.checked);
 
-    print(toggle.toMap());
-
     await db.update(TABLE_SHOPPING, toggle.toMap(),
         where: '$COLUMN_ID = ?', whereArgs: [item.id]);
   }
