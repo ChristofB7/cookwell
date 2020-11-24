@@ -1,14 +1,9 @@
-import 'package:cookwell/db/shopping_db_provider.dart';
 import 'package:cookwell/widgets/cookbook_menu.dart';
 import 'package:cookwell/widgets/shopping_menu.dart';
 import 'package:cookwell/widgets/view_recipe.dart';
 import 'package:flutter/material.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await ShoppingDatabaseProvider().initDatabase();
-  runApp(MyApp());
-}
+void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
   @override
