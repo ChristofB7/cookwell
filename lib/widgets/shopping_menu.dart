@@ -129,4 +129,36 @@ class _ShoppingMenuState extends State<ShoppingMenu> {
       ),
     );
   }
+
+  Card newItem(ColorScheme colorScheme) {
+    return Card(
+      child: ListTile(
+        leading: IconButton(icon: Icon(Icons.add), onPressed: _submitData),
+        title: Row(
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            Flexible(
+              child: TextField(
+                controller: itemController,
+                onSubmitted: (_) => _submitData,
+                decoration: InputDecoration(
+                  labelText: 'New Item',
+                ),
+              ),
+            ),
+            FlatButton(
+                color: Colors.white,
+                textColor: colorScheme.primary,
+                padding: EdgeInsets.all(8.0),
+                onPressed: _openNumberPicker,
+                child: Text(
+                  quantityController.text == "" ? "QUANTITY" : quantityController.text == "0" ? "QUANTITY" : quantityController.text,
+                  style: TextStyle(fontSize: 20.0),
+                ),
+            ),
+            ],
+        ),
+      ),
+    );
+  }
 }

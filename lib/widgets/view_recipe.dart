@@ -1,6 +1,8 @@
+import 'package:cookwell/db/shopping_db_provider.dart';
 import 'package:cookwell/model/recipe.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:cookwell/model/shopping_item.dart';
 
 class ViewRecipe extends StatelessWidget {
   Recipe recipe;
@@ -189,7 +191,11 @@ class ViewRecipe extends StatelessWidget {
                                 child: IconButton(
                                     padding: EdgeInsets.all(0),
                                     icon: Icon(Icons.local_grocery_store),
-                                    onPressed: () {}),
+                                    onPressed: () {
+                                      ShoppingDatabaseProvider.addShoppingItem(new ShoppingItem(item: ingredient.name, quantity: 0, checked: false));
+                                      final snackBar = SnackBar(content: Text('Added ${ingredient.name} to Shopping List'), duration: const Duration(seconds: 1));
+                                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                                    },),
                               )
                             ],
                           ))
