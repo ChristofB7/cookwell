@@ -13,7 +13,8 @@ class MyApp extends StatelessWidget {
       title: 'CookWell',
       home: MyHomePage(),
       routes: {
-        '/view-recipe' : (context) => ViewRecipe()
+        '/view-recipe': (context) => ViewRecipe(),
+        '/add-recipe': (context) => null
       },
     );
   }
@@ -32,13 +33,15 @@ class _MyHomePageState extends State<MyHomePage> {
   int _currentIndex;
   Widget _currentPage;
 
+  static const String MYCOOKBOOK = "MyCookbook";
+  static const String SHOPPING = "Shopping";
+
   @override
   void initState() {
     super.initState();
 
     _groceryMenu = RecipeMenu();
     _shoppingMenu = ShoppingMenu();
-
     _pages = [_groceryMenu, _shoppingMenu];
 
     _currentIndex = 0;
@@ -56,17 +59,13 @@ class _MyHomePageState extends State<MyHomePage> {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Cookwell'),
-        backgroundColor: ColorTheme.primary,
-      ),
       drawer: new Drawer(
         child: new Container(
           margin: EdgeInsets.only(top: 20.0),
           child: new Column(
             children: <Widget>[
-              navigationItemListTitle("Recipes", 0),
-              navigationItemListTitle("Shopping", 1),
+              navigationItemListTitle(MYCOOKBOOK, 0),
+              navigationItemListTitle(SHOPPING, 1),
             ],
           ),
         ),
@@ -75,20 +74,20 @@ class _MyHomePageState extends State<MyHomePage> {
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         currentIndex: _currentIndex,
-        backgroundColor: colorScheme.surface,
-        selectedItemColor: colorScheme.onSurface,
-        unselectedItemColor: colorScheme.onSurface.withOpacity(.60),
+        backgroundColor: colorScheme.primary,
+        selectedItemColor: colorScheme.onPrimary,
+        unselectedItemColor: colorScheme.onPrimary.withOpacity(.60),
         selectedLabelStyle: textTheme.caption,
         unselectedLabelStyle: textTheme.caption,
         onTap: (index) => changeTab(index),
         items: [
           BottomNavigationBarItem(
-             // make constant
-            label: 'My Cookbook',
+            // make constant
+            label: MYCOOKBOOK,
             icon: Icon(Icons.fastfood_rounded),
           ),
           BottomNavigationBarItem(
-            label: 'Shopping',
+            label: SHOPPING,
             icon: Icon(Icons.list),
           ),
         ],
@@ -100,7 +99,9 @@ class _MyHomePageState extends State<MyHomePage> {
     return new ListTile(
       title: new Text(
         title,
-        style: new TextStyle(color: Theme.of(context).colorScheme.secondaryVariant, fontSize: 22.0),
+        style: new TextStyle(
+            color: Theme.of(context).colorScheme.secondaryVariant,
+            fontSize: 22.0),
       ),
       onTap: () {
         Navigator.pop(context);
@@ -110,7 +111,6 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-//TODO
 ThemeData _buildColorTheme() {
   final ThemeData base = ThemeData.light();
   return base.copyWith(
@@ -132,47 +132,50 @@ TextTheme _buildTextTheme(TextTheme base) {
           fontSize: 14,
           letterSpacing: defaultLetterSpacing,
         ),
+        headline6: base.caption.copyWith(
+          fontWeight: FontWeight.bold,
+          fontSize: 20,
+          letterSpacing: defaultLetterSpacing,
+        ),
       )
       .apply(
-        fontFamily: 'Rubik',
-        displayColor: charcoal,
-        bodyColor: charcoal,
+        fontFamily: 'Arimo',
+        displayColor: prussianBlue,
+        bodyColor: prussianBlue,
       );
 }
 
 const ColorScheme ColorTheme = ColorScheme(
-  primary: shadowBlue,
-  primaryVariant: queenBlue,
-  secondary: middleGray,
-  secondaryVariant: blackChocolate,
-  surface: surfaceColor,
-  background: ivory,
+  primary: prussianBlue,
+  primaryVariant: bdazzledBlue,
+  secondary: jasmine,
+  secondaryVariant: honeyYellow,
+  surface: cultured,
+  background: white,
   error: errorRed,
-  onPrimary: russett,
-  onSecondary: slateColor,
-  onSurface: shadowBlue,
-  onBackground: middleGray,
-  onError: surfaceColor,
+  onPrimary: jasmine,
+  onSecondary: bdazzledBlue,
+  onSurface: bdazzledBlue,
+  onBackground: bdazzledBlue,
+  onError: white,
   brightness: Brightness.light,
 );
 
-const Color darkSkyBlue = Color(0xFF8CB1B9);
+const Color white = Color(0xFFFFFFFF);
+const Color columbiaBlue = Color(0xFFCDEDFD);
+const Color uraniunBlue = Color(0xFFB6DCFE);
+const Color prussianBlue = Color(0xFF0B3954);
+const Color bdazzledBlue = Color(0xFF235789);
+const Color iceburgBlue = Color(0xFF6DA5D9);
+const Color honeyYellow = Color(0xFFFBAF00);
+const Color jasmine = Color(0xFFFFDA85);
+const Color burntOrange = Color(0xFFF67751);
+const Color atomicTangerine = Color(0xFFF39D68);
+const Color mangoTango = Color(0xFFF08A4B);
+
 const Color queenBlue = Color(0xFF33658A);
 const Color charcoal = Color(0xFF2F4858);
-const Color cornsilk = Color(0xFFFEFAE0);
 const Color cultured = Color(0xFFF3F3F3);
-const Color mintCream = Color(0xFFF7FFFD);
-const Color slateColor = Color(0xFF628395);
-const Color middleGray = Color(0xFF96897B);
-const Color blackChocolate = Color(0xFF23231A);
-const Color shadowBlue = Color(0xFF7286A0);
-const Color russett = Color(0xFF895737);
-const Color liverOrgan = Color(0xFF5E3023);
-const Color ivory = Color(0xFFF6F7EB);
-
 const Color errorRed = Color(0xFFC5032B);
 
-const Color surfaceColor = Color(0xFFF9F8FE);
-const Color backgroundWhite = Colors.white;
-
-const defaultLetterSpacing = 0.02;
+const defaultLetterSpacing = 0.05;

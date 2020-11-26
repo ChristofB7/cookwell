@@ -11,6 +11,8 @@ class Recipe {
   Duration prepTime;
   double servingSize;
   List<String> categories;
+  String notes;
+  bool favorite = false;
 
   Recipe(
       {@required this.name,
@@ -20,5 +22,7 @@ class Recipe {
       this.cookingTime,
       this.prepTime,
       this.servingSize,
-      this.categories});
+      this.categories,
+      this.notes,
+      this.favorite});
 }

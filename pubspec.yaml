@@ -70,6 +70,12 @@ flutter:
    - family: Vice City
      fonts:
        - asset: lib/assets/fonts/ViceCitySans.otf
+   - family: Arimo
+     fonts:
+      - asset: lib/assets/fonts/Arimo/Arimo-Regular.ttf
+      - asset: lib/assets/fonts/Arimo/Arimo-BoldItalic.ttf
+      - asset: lib/assets/fonts/Arimo/Arimo-Italic.ttf
+      - asset: lib/assets/fonts/Arimo/Arimo-Bold.ttf
   #       - asset: fonts/Schyler-Italic.ttf
   #         style: italic
   #   - family: Trajan Pro
