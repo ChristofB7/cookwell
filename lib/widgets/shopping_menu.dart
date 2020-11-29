@@ -1,6 +1,7 @@
-import 'package:cookwell/model/dummy_shopping.dart';
+import 'package:cookwell/db/shopping_db_provider.dart';
 import 'package:cookwell/model/shopping_item.dart';
 import 'package:flutter/material.dart';
+import 'package:numberpicker/numberpicker.dart';
 
 class ShoppingMenu extends StatefulWidget {
   ShoppingMenu();
@@ -10,28 +11,98 @@ class ShoppingMenu extends StatefulWidget {
 }
 
 class _ShoppingMenuState extends State<ShoppingMenu> {
+  Future<List<ShoppingItem>> checkedList;
+  Future<List<ShoppingItem>> uncheckedList;
+
   final itemController = TextEditingController();
   final quantityController = TextEditingController();
 
-  void _submitData() {
-    final _item = itemController.text;
-    final _quantity = int.parse(quantityController.text);
-
-    setState(() {
-      dummy_shopping.add(new ShoppingItem(name: _item, quantity: _quantity, checked: 'false'));
-    });
-
-    itemController.text = '';
-
+  @override
+  initState() {
+    super.initState();
   }
 
+  void _submitData() async {
+    final _item = itemController.text;
+    final _quantity = quantityController.text;
+
+    if (itemController.text.length > 2) {
+      await ShoppingDatabaseProvider.addShoppingItem(new ShoppingItem(
+          item: _item,
+          quantity: _quantity.length > 0 ? int.parse(_quantity) : 0,
+          checked: false));
+
+      setState(() {
+        checkedList = ShoppingDatabaseProvider.getCheckedItems();
+        uncheckedList = ShoppingDatabaseProvider.getUncheckedItems();
+      });
+
+      itemController.text = '';
+      quantityController.text = '';
+    }
+  }
+
+  void shareShoppingList(BuildContext context) async {
+    await ShoppingItem.createShoppingList(context);
+  }
+
+  void _deleteAllChecked() async {
+    final list = await ShoppingDatabaseProvider.getCheckedItems();
+
+    if (list != null){
+      for (ShoppingItem item in list) {
+        ShoppingDatabaseProvider.deleteShoppingItem(item);
+      }
+    }
+
+    _reload();
+  }
+
+  void _reload() {
+    setState(() {
+      checkedList = ShoppingDatabaseProvider.getCheckedItems();
+      uncheckedList = ShoppingDatabaseProvider.getUncheckedItems();
+    });
+  }
+
+  void _openNumberPicker() {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title:  Text("Quantity"),
+        content:  StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return Container(
+                height: 200,
+                child: Center(
+                  child: NumberPicker.integer(
+                    initialValue: quantityController.text == "" ? 0 : int.parse(
+                        quantityController.text),
+                    minValue: 0,
+                    maxValue: 10,
+                    onChanged: (newValue) =>
+                        setState(() =>
+                        quantityController.text = newValue.toString()),),
+                ),
+              );
+            },),
+        actions: <Widget>[
+          TextButton(
+            child: Text('Ok'),
+            onPressed: () {
+              Navigator.of(context).pop();
+              setState(() {});
+            },
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
-
-    quantityController.text = '1';
 
     return Scaffold(
       backgroundColor: colorScheme.background,
@@ -39,92 +110,104 @@ class _ShoppingMenuState extends State<ShoppingMenu> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ListView(
-              shrinkWrap: true,
-              scrollDirection: Axis.vertical,
-              children: dummy_shopping
-                  .where((i) => i.checked == 'false')
-                  .map(
-                    (item) => GestureDetector(
-                      onTap: () {},
-                      child: Card(
-                        child: CheckboxListTile(
-                          title: Text("${item.name} (${item.quantity})"),
-                          secondary: Icon(Icons.more_vert),
-                          controlAffinity: ListTileControlAffinity.leading,
-                          value: item.checked == "true" ? true : false,
-                          onChanged: (bool value) {
-                            setState(() {
-                              item.checked = value.toString();
-                            });
-                          },
-                          activeColor: colorScheme.primary,
-                          checkColor: colorScheme.primaryVariant,
-                        ),
-                      ),
-                    ),
-                  )
-                  .toList(),
+            FutureBuilder<List<ShoppingItem>>(
+              future: ShoppingDatabaseProvider.getUncheckedItems(),
+              builder: (BuildContext context,
+                  AsyncSnapshot<List<ShoppingItem>> snapshot) {
+                return snapshot.hasData
+                    ? Column(
+                        children: snapshot.data
+                            .map((item) => buildItem(item, colorScheme, false))
+                            .toList())
+                    : SizedBox();
+              },
             ),
-            Card(
-              child: ListTile(
-                leading: IconButton(icon: Icon(Icons.add), onPressed: _submitData),
-                title: Row(
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    Flexible(child: TextField(
-                      controller: itemController,
-                      onSubmitted: (_) => _submitData,
-                      decoration: InputDecoration(
-                        labelText: 'New Item',
-                      ),),),
-                    Container(
-                      width: 50,
-                      child: Padding(
-                        padding: EdgeInsets.fromLTRB(8, 0, 0, 0),
-                        child: TextField(
-                            controller: quantityController,
-                            keyboardType: TextInputType.number,),
-                      ),
-                    ),
-                  ],
+            newItem(colorScheme),
+            Row(
+              children: [
+                Text("COMPLETED"),
+                IconButton(
+                  icon: Icon(Icons.ios_share),
+                  onPressed: () {
+                    shareShoppingList(context);
+                  },
                 ),
-                //trailing: Icon(Icons.check),
-              ),
+                IconButton(
+                  icon: Icon(Icons.delete),
+                  onPressed: () => _deleteAllChecked(),
+                ),
+              ],
             ),
-            Text('completed'),
-            ListView(
-              shrinkWrap: true,
-              scrollDirection: Axis.vertical,
-              children: dummy_shopping
-                  .where((i) => i.checked == 'true')
-                  .map(
-                    (item) => GestureDetector(
-                      onTap: () {},
-                      child: Card(
-                        child: CheckboxListTile(
-                          title: Text(
-                            "${item.name} (${item.quantity})",
-                            style: TextStyle(
-                                decoration: TextDecoration.lineThrough),
-                          ),
-                          secondary: Icon(Icons.more_vert),
-                          controlAffinity: ListTileControlAffinity.leading,
-                          value: item.checked == "true" ? true : false,
-                          onChanged: (bool value) {
-                            setState(() {
-                              item.checked = value.toString();
-                            });
-                          },
-                          activeColor: colorScheme.primary,
-                          checkColor: colorScheme.primaryVariant,
-                        ),
-                      ),
-                    ),
-                  )
-                  .toList(),
+            FutureBuilder<List<ShoppingItem>>(
+              future: ShoppingDatabaseProvider.getCheckedItems(),
+              builder: (BuildContext context,
+                  AsyncSnapshot<List<ShoppingItem>> snapshot) {
+                if (snapshot.hasData) {
+                  return Column(
+                      children: snapshot.data
+                          .map((item) => buildItem(item, colorScheme, true))
+                          .toList());
+                } else {
+                  return SizedBox();
+                }
+              },
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Dismissible buildItem(
+      ShoppingItem item, ColorScheme colorScheme, bool checked) {
+    return Dismissible(
+      key: Key(item.item + item.id.toString()),
+      confirmDismiss: (direction) async {
+        if (direction == DismissDirection.endToStart) {
+          setState(() {
+            ShoppingDatabaseProvider.deleteShoppingItem(item);
+          });
+          return true;
+        } else
+          return false;
+      },
+      background: Container(color: Colors.red),
+      onDismissed: (direction) {
+        setState(() {
+          ShoppingDatabaseProvider.deleteShoppingItem(item);
+          checkedList = ShoppingDatabaseProvider.getCheckedItems();
+          uncheckedList = ShoppingDatabaseProvider.getUncheckedItems();
+        });
+      },
+      child: Card(
+        child: CheckboxListTile(
+          title: Row(
+            children: [
+              Text(
+                "${item.item} ",
+                style: checked
+                    ? TextStyle(decoration: TextDecoration.lineThrough)
+                    : null,
+              ),
+              Text(
+                item.quantity != 0 ? "(${item.quantity})" : "",
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    decoration: checked ? TextDecoration.lineThrough : null),
+              ),
+            ],
+          ),
+          controlAffinity: ListTileControlAffinity.leading,
+          value: item.checked,
+          onChanged: (bool value) {
+            ShoppingDatabaseProvider.toggleItem(item);
+            setState(() {
+              checkedList = ShoppingDatabaseProvider.getCheckedItems();
+              uncheckedList = ShoppingDatabaseProvider.getUncheckedItems();
+            });
+          },
+          activeColor: colorScheme.primary,
+          checkColor: colorScheme.primaryVariant,
         ),
       ),
     );
