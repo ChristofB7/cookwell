@@ -1,4 +1,4 @@
-import 'package:cookwell/db/shopping_db_provider.dart';
+import 'package:cookwell/db/db_provider.dart';
 import 'package:cookwell/widgets/cookbook_menu.dart';
 import 'package:cookwell/widgets/shopping_menu.dart';
 import 'package:cookwell/widgets/view_recipe.dart';
@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await ShoppingDatabaseProvider().initDatabase();
+  await DatabaseProvider().initDatabase();
   runApp(MyApp());
 }
 
@@ -19,7 +19,8 @@ class MyApp extends StatelessWidget {
       home: MyHomePage(),
       routes: {
         '/view-recipe': (context) => ViewRecipe(),
-        '/add-recipe': (context) => null
+        '/add-recipe': (context) => null,
+        '/all-recipes': (context) => RecipeMenu()
       },
     );
   }
@@ -32,25 +33,25 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   List<Widget> _pages;
-  Widget _groceryMenu;
+  Widget _recipeMenu;
   Widget _shoppingMenu;
 
   int _currentIndex;
   Widget _currentPage;
 
-  static const String MYCOOKBOOK = "MyCookbook";
+  static const String RECIPES = "Recipes";
   static const String SHOPPING = "Shopping";
 
   @override
   void initState() {
     super.initState();
 
-    _groceryMenu = RecipeMenu();
+    _recipeMenu = RecipeMenu();
     _shoppingMenu = ShoppingMenu();
-    _pages = [_groceryMenu, _shoppingMenu];
+    _pages = [_recipeMenu, _shoppingMenu];
 
     _currentIndex = 0;
-    _currentPage = _groceryMenu;
+    _currentPage = _recipeMenu;
   }
 
   void changeTab(int index) {
@@ -69,7 +70,7 @@ class _MyHomePageState extends State<MyHomePage> {
           margin: EdgeInsets.only(top: 20.0),
           child: new Column(
             children: <Widget>[
-              navigationItemListTitle(MYCOOKBOOK, 0),
+              navigationItemListTitle(RECIPES, 0),
               navigationItemListTitle(SHOPPING, 1),
             ],
           ),
@@ -88,7 +89,7 @@ class _MyHomePageState extends State<MyHomePage> {
         items: [
           BottomNavigationBarItem(
             // make constant
-            label: MYCOOKBOOK,
+            label: RECIPES,
             icon: Icon(Icons.fastfood_rounded),
           ),
           BottomNavigationBarItem(

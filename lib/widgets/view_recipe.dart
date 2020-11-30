@@ -1,6 +1,7 @@
-import 'package:cookwell/db/shopping_db_provider.dart';
+import 'package:cookwell/db/db_provider.dart';
 import 'package:cookwell/model/ingredient.dart';
 import 'package:cookwell/model/recipe.dart';
+import 'package:cookwell/widgets/cookbook_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:cookwell/model/shopping_item.dart';
@@ -98,7 +99,7 @@ class _ViewRecipeState extends State<ViewRecipe> {
             decoration: BoxDecoration(
                 color: colorScheme.primary,
                 image: DecorationImage(
-                    image: recipe.image.image, fit: BoxFit.cover)),
+                    image: recipe.image != null ? recipe.image.image : AssetImage('lib/assets/images/vegetarian.png'), fit: BoxFit.cover)),
           ),
         ),
         Row(
@@ -114,22 +115,26 @@ class _ViewRecipeState extends State<ViewRecipe> {
               onPressed: () => Navigator.pop(context),
               color: Colors.white,
             ),
-            //TODO FAVORITES GO HERE
             IconButton(
-              icon: (recipe.favorite) ? Icon(Icons.favorite, color: colorScheme.secondary, size: 30,) : Icon(Icons.favorite_border, color: colorScheme.secondary, size: 30,),
+              icon: recipe.saved ? Icon(Icons.favorite, color: colorScheme.secondary, size: 30,) : Icon(Icons.favorite_border, color: colorScheme.secondary, size: 30,),
               onPressed: () {
+                setState(() {
+                  if (recipe.saved) {
+                    DatabaseProvider.deleteRecipe(recipe);
+                  } else {
+                    DatabaseProvider.addRecipe(recipe);
+                  }
+                });
+                recipe.encodeImage();
                 final snackBar = SnackBar(
-                    content: recipe.favorite ? Text('Removed from MyCookbook',
-                        style: TextStyle(color: colorScheme.primary),): Text('Added to MyCookbook',
-                        style: TextStyle(color: colorScheme.primary),),
+                    content: recipe.saved ? Text('Removed from MyCookbook',
+                      style: TextStyle(color: colorScheme.primary),) : Text('Added to MyCookbook',
+                      style: TextStyle(color: colorScheme.primary),),
                     backgroundColor: colorScheme.secondary,
                     duration: const Duration(milliseconds: 500));
                 ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                setState(() {
-                  recipe.favorite = !recipe.favorite;
 
-                  //TODO add to local database
-                });
+                recipe.saved = !recipe.saved;
               },
               color: Colors.white,
             )
@@ -272,7 +277,7 @@ class _ViewRecipeState extends State<ViewRecipe> {
             icon: Icon(Icons.local_grocery_store_outlined,
                 color: colorScheme.secondary),
             onPressed: () {
-              ShoppingDatabaseProvider.addShoppingItem(new ShoppingItem(
+              DatabaseProvider.addShoppingItem(new ShoppingItem(
                   item: ingredient.name, quantity: 0, checked: false));
               final snackBar = SnackBar(
                   content: Text('Added ${ingredient.name} to Shopping List',

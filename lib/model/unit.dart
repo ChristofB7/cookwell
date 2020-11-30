@@ -16,3 +16,9 @@ enum Unit {
 // Fruit f = Fruit.values.firstWhere((e) => e.toString() == str);
 
 }
+
+extension ParseToString on Unit {
+  String toUnitString() {
+    return this.toString().split('.').last;
+  }
+}

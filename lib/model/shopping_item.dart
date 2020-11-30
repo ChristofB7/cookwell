@@ -1,4 +1,4 @@
-import 'package:cookwell/db/shopping_db_provider.dart';
+import 'package:cookwell/db/db_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:share/share.dart';
@@ -16,22 +16,22 @@ class ShoppingItem {
   });
 
   Map<String, dynamic> toMap() =>{
-    ShoppingDatabaseProvider.COLUMN_ID: id,
-    ShoppingDatabaseProvider.COLUMN_ITEM: item,
-    ShoppingDatabaseProvider.COLUMN_CHECKED: checked ? 1 : 0,
-    ShoppingDatabaseProvider.COLUMN_QUANTITY: quantity,
+    DatabaseProvider.COLUMN_SHOP_ID: id,
+    DatabaseProvider.COLUMN_ITEM: item,
+    DatabaseProvider.COLUMN_CHECKED: checked ? 1 : 0,
+    DatabaseProvider.COLUMN_QUANTITY: quantity,
     };
 
   ShoppingItem.fromMap(Map<String, dynamic> map)   {
-    id = map[ShoppingDatabaseProvider.COLUMN_ID];
-    item = map[ShoppingDatabaseProvider.COLUMN_ITEM];
-    quantity = map[ShoppingDatabaseProvider.COLUMN_QUANTITY];
-    checked = map[ShoppingDatabaseProvider.COLUMN_CHECKED] == 1;
+    id = map[DatabaseProvider.COLUMN_SHOP_ID];
+    item = map[DatabaseProvider.COLUMN_ITEM];
+    quantity = map[DatabaseProvider.COLUMN_QUANTITY];
+    checked = map[DatabaseProvider.COLUMN_CHECKED] == 1;
   }
 
   static Future<void> createShoppingList(BuildContext context) async {
     final RenderBox box = context.findRenderObject();
-    List<ShoppingItem> list = await ShoppingDatabaseProvider.getUncheckedItems();
+    List<ShoppingItem> list = await DatabaseProvider.getUncheckedItems();
     String sharableList = "";
 
     if (list != null) {

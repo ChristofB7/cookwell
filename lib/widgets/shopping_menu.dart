@@ -1,4 +1,4 @@
-import 'package:cookwell/db/shopping_db_provider.dart';
+import 'package:cookwell/db/db_provider.dart';
 import 'package:cookwell/model/shopping_item.dart';
 import 'package:flutter/material.dart';
 import 'package:numberpicker/numberpicker.dart';
@@ -27,14 +27,14 @@ class _ShoppingMenuState extends State<ShoppingMenu> {
     final _quantity = quantityController.text;
 
     if (itemController.text.length > 2) {
-      await ShoppingDatabaseProvider.addShoppingItem(new ShoppingItem(
+      await DatabaseProvider.addShoppingItem(new ShoppingItem(
           item: _item,
           quantity: _quantity.length > 0 ? int.parse(_quantity) : 0,
           checked: false));
 
       setState(() {
-        checkedList = ShoppingDatabaseProvider.getCheckedItems();
-        uncheckedList = ShoppingDatabaseProvider.getUncheckedItems();
+        checkedList = DatabaseProvider.getCheckedItems();
+        uncheckedList = DatabaseProvider.getUncheckedItems();
       });
 
       itemController.text = '';
@@ -47,11 +47,11 @@ class _ShoppingMenuState extends State<ShoppingMenu> {
   }
 
   void _deleteAllChecked() async {
-    final list = await ShoppingDatabaseProvider.getCheckedItems();
+    final list = await DatabaseProvider.getCheckedItems();
 
     if (list != null){
       for (ShoppingItem item in list) {
-        ShoppingDatabaseProvider.deleteShoppingItem(item);
+        DatabaseProvider.deleteShoppingItem(item);
       }
     }
 
@@ -60,8 +60,8 @@ class _ShoppingMenuState extends State<ShoppingMenu> {
 
   void _reload() {
     setState(() {
-      checkedList = ShoppingDatabaseProvider.getCheckedItems();
-      uncheckedList = ShoppingDatabaseProvider.getUncheckedItems();
+      checkedList = DatabaseProvider.getCheckedItems();
+      uncheckedList = DatabaseProvider.getUncheckedItems();
     });
   }
 
@@ -111,7 +111,7 @@ class _ShoppingMenuState extends State<ShoppingMenu> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             FutureBuilder<List<ShoppingItem>>(
-              future: ShoppingDatabaseProvider.getUncheckedItems(),
+              future: DatabaseProvider.getUncheckedItems(),
               builder: (BuildContext context,
                   AsyncSnapshot<List<ShoppingItem>> snapshot) {
                 return snapshot.hasData
@@ -139,7 +139,7 @@ class _ShoppingMenuState extends State<ShoppingMenu> {
               ],
             ),
             FutureBuilder<List<ShoppingItem>>(
-              future: ShoppingDatabaseProvider.getCheckedItems(),
+              future: DatabaseProvider.getCheckedItems(),
               builder: (BuildContext context,
                   AsyncSnapshot<List<ShoppingItem>> snapshot) {
                 if (snapshot.hasData) {
@@ -165,7 +165,7 @@ class _ShoppingMenuState extends State<ShoppingMenu> {
       confirmDismiss: (direction) async {
         if (direction == DismissDirection.endToStart) {
           setState(() {
-            ShoppingDatabaseProvider.deleteShoppingItem(item);
+            DatabaseProvider.deleteShoppingItem(item);
           });
           return true;
         } else
@@ -174,9 +174,9 @@ class _ShoppingMenuState extends State<ShoppingMenu> {
       background: Container(color: Colors.red),
       onDismissed: (direction) {
         setState(() {
-          ShoppingDatabaseProvider.deleteShoppingItem(item);
-          checkedList = ShoppingDatabaseProvider.getCheckedItems();
-          uncheckedList = ShoppingDatabaseProvider.getUncheckedItems();
+          DatabaseProvider.deleteShoppingItem(item);
+          checkedList = DatabaseProvider.getCheckedItems();
+          uncheckedList = DatabaseProvider.getUncheckedItems();
         });
       },
       child: Card(
@@ -200,10 +200,10 @@ class _ShoppingMenuState extends State<ShoppingMenu> {
           controlAffinity: ListTileControlAffinity.leading,
           value: item.checked,
           onChanged: (bool value) {
-            ShoppingDatabaseProvider.toggleItem(item);
+            DatabaseProvider.toggleItem(item);
             setState(() {
-              checkedList = ShoppingDatabaseProvider.getCheckedItems();
-              uncheckedList = ShoppingDatabaseProvider.getUncheckedItems();
+              checkedList = DatabaseProvider.getCheckedItems();
+              uncheckedList = DatabaseProvider.getUncheckedItems();
             });
           },
           activeColor: colorScheme.primary,
