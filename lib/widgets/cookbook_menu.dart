@@ -24,15 +24,13 @@ class _RecipeMenuState extends State<RecipeMenu> {
     savedRecipes = DatabaseProvider.getRecipes();
 
     return Scaffold(
-      backgroundColor: colorScheme.surface,
+      backgroundColor: colorScheme.background,
       // TODO refresh page on Navigation pop
       body: SingleChildScrollView(
           child: Column(
             children: [
-              Card(
-                margin: EdgeInsets.symmetric(vertical: 3, horizontal: 5),
-                child: Text("My Cookbook"),
-              ), FutureBuilder<List<Recipe>>(
+              _createHeader("MyCookbook", colorScheme, textTheme),
+              FutureBuilder<List<Recipe>>(
                   future: savedRecipes,
                   builder: (BuildContext context,
                       AsyncSnapshot<List<Recipe>> snapshot) {
@@ -52,10 +50,7 @@ class _RecipeMenuState extends State<RecipeMenu> {
                         : SizedBox();
                   },
                 ),
-              Card(
-                margin: EdgeInsets.symmetric(vertical: 3, horizontal: 5),
-                child: Text("All Recipes"),
-              ),
+              _createHeader("All Recipes", colorScheme, textTheme),
               ListView(
                 shrinkWrap: true,
                 scrollDirection: Axis.vertical,
@@ -99,6 +94,30 @@ class _RecipeMenuState extends State<RecipeMenu> {
         ]),
         //trailing: ,
       ),
+    );
+  }
+
+  // TODO make header own widget
+  Column _createHeader(String header, ColorScheme colorScheme,
+      TextTheme textTheme) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(15, 8, 0, 0),
+          child:Text(
+                  header,
+                  style: textTheme.headline6,
+                ),
+          ),
+        Divider(
+          color: colorScheme.secondary,
+          height: 10,
+          thickness: 1,
+          indent: 3,
+          endIndent: 3,
+        ),
+      ],
     );
   }
 }

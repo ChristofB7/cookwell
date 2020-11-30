@@ -48,11 +48,35 @@ class _ShoppingMenuState extends State<ShoppingMenu> {
 
   void _deleteAllChecked() async {
     final list = await DatabaseProvider.getCheckedItems();
-
-    if (list != null){
-      for (ShoppingItem item in list) {
-        DatabaseProvider.deleteShoppingItem(item);
-      }
+    if (list != null) {
+      showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          title: Text("Delete Checked Items"),
+          content:
+              Text("Are you sure you would like to delete all checked items?"),
+          actions: [
+            TextButton(
+              child: Text('Yes'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                setState(() {
+                  for (ShoppingItem item in list) {
+                    DatabaseProvider.deleteShoppingItem(item);
+                  }
+                });
+              },
+            ),
+            TextButton(
+              child: Text('No'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                setState(() {});
+              },
+            ),
+          ],
+        ),
+      );
     }
 
     _reload();
@@ -65,27 +89,34 @@ class _ShoppingMenuState extends State<ShoppingMenu> {
     });
   }
 
-  void _openNumberPicker() {
+  void _openNumberPicker(TextTheme textTheme) {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title:  Text("Quantity"),
-        content:  StatefulBuilder(
-            builder: (BuildContext context, StateSetter setState) {
-              return Container(
-                height: 200,
-                child: Center(
-                  child: NumberPicker.integer(
-                    initialValue: quantityController.text == "" ? 0 : int.parse(
-                        quantityController.text),
-                    minValue: 0,
-                    maxValue: 10,
-                    onChanged: (newValue) =>
-                        setState(() =>
-                        quantityController.text = newValue.toString()),),
+        title: Text(
+          "Quantity",
+          style: textTheme.headline6,
+        ),
+        content: StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return Container(
+              height: 200,
+              child: Center(
+                child: NumberPicker.integer(
+                  initialValue: quantityController.text == ""
+                      ? 0
+                      : int.parse(quantityController.text),
+                  minValue: 0,
+                  maxValue: 10,
+                  onChanged: (newValue) => setState(
+                      () => quantityController.text = newValue.toString()),
+                  selectedTextStyle: textTheme.headline5,
+                  textStyle: textTheme.bodyText1,
                 ),
-              );
-            },),
+              ),
+            );
+          },
+        ),
         actions: <Widget>[
           TextButton(
             child: Text('Ok'),
@@ -110,6 +141,20 @@ class _ShoppingMenuState extends State<ShoppingMenu> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            _createHeader(
+              "MY LIST",
+              colorScheme,
+              textTheme,
+              IconButton(
+                icon: Icon(
+                  Icons.ios_share,
+                  color: colorScheme.primary,
+                ),
+                onPressed: () {
+                  shareShoppingList(context);
+                },
+              ),
+            ),
             FutureBuilder<List<ShoppingItem>>(
               future: DatabaseProvider.getUncheckedItems(),
               builder: (BuildContext context,
@@ -117,26 +162,24 @@ class _ShoppingMenuState extends State<ShoppingMenu> {
                 return snapshot.hasData
                     ? Column(
                         children: snapshot.data
-                            .map((item) => buildItem(item, colorScheme, false))
+                            .map((item) =>
+                                _buildItem(item, colorScheme, textTheme, false))
                             .toList())
                     : SizedBox();
               },
             ),
-            newItem(colorScheme),
-            Row(
-              children: [
-                Text("COMPLETED"),
-                IconButton(
-                  icon: Icon(Icons.ios_share),
-                  onPressed: () {
-                    shareShoppingList(context);
-                  },
+            _newItem(colorScheme, textTheme),
+            _createHeader(
+              "COMPLETED",
+              colorScheme,
+              textTheme,
+              IconButton(
+                icon: Icon(
+                  Icons.delete,
+                  color: colorScheme.primary,
                 ),
-                IconButton(
-                  icon: Icon(Icons.delete),
-                  onPressed: () => _deleteAllChecked(),
-                ),
-              ],
+                onPressed: () => _deleteAllChecked(),
+              ),
             ),
             FutureBuilder<List<ShoppingItem>>(
               future: DatabaseProvider.getCheckedItems(),
@@ -145,7 +188,8 @@ class _ShoppingMenuState extends State<ShoppingMenu> {
                 if (snapshot.hasData) {
                   return Column(
                       children: snapshot.data
-                          .map((item) => buildItem(item, colorScheme, true))
+                          .map((item) =>
+                              _buildItem(item, colorScheme, textTheme, true))
                           .toList());
                 } else {
                   return SizedBox();
@@ -158,8 +202,8 @@ class _ShoppingMenuState extends State<ShoppingMenu> {
     );
   }
 
-  Dismissible buildItem(
-      ShoppingItem item, ColorScheme colorScheme, bool checked) {
+  Dismissible _buildItem(ShoppingItem item, ColorScheme colorScheme,
+      TextTheme textTheme, bool checked) {
     return Dismissible(
       key: Key(item.item + item.id.toString()),
       confirmDismiss: (direction) async {
@@ -171,6 +215,7 @@ class _ShoppingMenuState extends State<ShoppingMenu> {
         } else
           return false;
       },
+      direction: DismissDirection.endToStart,
       background: Container(color: Colors.red),
       onDismissed: (direction) {
         setState(() {
@@ -179,44 +224,63 @@ class _ShoppingMenuState extends State<ShoppingMenu> {
           uncheckedList = DatabaseProvider.getUncheckedItems();
         });
       },
-      child: Card(
-        child: CheckboxListTile(
-          title: Row(
-            children: [
-              Text(
-                "${item.item} ",
-                style: checked
-                    ? TextStyle(decoration: TextDecoration.lineThrough)
-                    : null,
+      child: InkWell(
+        child: Padding(
+          padding: EdgeInsets.all(0),
+          child: Row(
+            children: <Widget>[
+              Checkbox(
+                value: item.checked,
+                onChanged: (bool value) {
+                  DatabaseProvider.toggleItem(item);
+                  setState(() {
+                    checkedList = DatabaseProvider.getCheckedItems();
+                    uncheckedList = DatabaseProvider.getUncheckedItems();
+                  });
+                },
+                activeColor: colorScheme.primary,
+                checkColor: colorScheme.primary,
               ),
-              Text(
-                item.quantity != 0 ? "(${item.quantity})" : "",
-                style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    decoration: checked ? TextDecoration.lineThrough : null),
+              Expanded(
+                child: Row(
+                  children: [
+                    Text(
+                      "${item.item} ",
+                      style: TextStyle(
+                          fontSize: 14,
+                          decoration:
+                              checked ? TextDecoration.lineThrough : null),
+                    ),
+                    Text(
+                      item.quantity != 0 ? "(${item.quantity})" : "",
+                      style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          decoration:
+                              checked ? TextDecoration.lineThrough : null),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
-          controlAffinity: ListTileControlAffinity.leading,
-          value: item.checked,
-          onChanged: (bool value) {
-            DatabaseProvider.toggleItem(item);
-            setState(() {
-              checkedList = DatabaseProvider.getCheckedItems();
-              uncheckedList = DatabaseProvider.getUncheckedItems();
-            });
-          },
-          activeColor: colorScheme.primary,
-          checkColor: colorScheme.primaryVariant,
         ),
       ),
     );
   }
 
-  Card newItem(ColorScheme colorScheme) {
+  Card _newItem(ColorScheme colorScheme, TextTheme textTheme) {
     return Card(
+      shape: RoundedRectangleBorder(
+        side: BorderSide(color: colorScheme.secondary, width: 1),
+        borderRadius: BorderRadius.circular(10),
+      ),
       child: ListTile(
-        leading: IconButton(icon: Icon(Icons.add), onPressed: _submitData),
+        leading: IconButton(
+          icon: Icon(Icons.add),
+          onPressed: _submitData,
+          color: colorScheme.primary,
+        ),
         title: Row(
           mainAxisSize: MainAxisSize.max,
           children: [
@@ -230,18 +294,58 @@ class _ShoppingMenuState extends State<ShoppingMenu> {
               ),
             ),
             FlatButton(
-                color: Colors.white,
-                textColor: colorScheme.primary,
-                padding: EdgeInsets.all(8.0),
-                onPressed: _openNumberPicker,
-                child: Text(
-                  quantityController.text == "" ? "QUANTITY" : quantityController.text == "0" ? "QUANTITY" : quantityController.text,
-                  style: TextStyle(fontSize: 20.0),
-                ),
+              color: Colors.white,
+              textColor: colorScheme.primary,
+              padding: EdgeInsets.all(8.0),
+              onPressed: () => _openNumberPicker(textTheme),
+              child: quantityController.text == ""
+                  ? Text(
+                      "QUANTITY",
+                      style: TextStyle(fontSize: 12.0),
+                    )
+                  : quantityController.text == "0"
+                      ? Text(
+                          "QUANTITY",
+                          style: TextStyle(fontSize: 12.0),
+                        )
+                      : Text(
+                          quantityController.text,
+                          style: TextStyle(fontSize: 20.0),
+                        ),
             ),
-            ],
+          ],
         ),
       ),
+    );
+  }
+
+  Column _createHeader(String header, ColorScheme colorScheme,
+      TextTheme textTheme, IconButton icon) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(15, 8, 0, 0),
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  header,
+                  style: textTheme.headline6,
+                ),
+              ),
+              icon,
+            ],
+          ),
+        ),
+        Divider(
+          color: colorScheme.secondary,
+          height: 10,
+          thickness: 1,
+          indent: 3,
+          endIndent: 3,
+        ),
+      ],
     );
   }
 }

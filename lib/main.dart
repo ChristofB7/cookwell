@@ -122,6 +122,14 @@ ThemeData _buildColorTheme() {
   return base.copyWith(
     colorScheme: ColorTheme,
     textTheme: _buildTextTheme(base.textTheme),
+    hintColor: ColorTheme.primary,
+    inputDecorationTheme: new InputDecorationTheme(
+          labelStyle: new TextStyle(color: ColorTheme.primary.withOpacity(0.70)),
+        enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Color(0x00FFFFFF),),),
+        focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Color(0x00FFFFFF),),),
+        border: UnderlineInputBorder(borderSide: BorderSide(color: Color(0x00FFFFFF),),),
+    ),
+      unselectedWidgetColor: ColorTheme.primary,
   );
 }
 
@@ -141,6 +149,10 @@ TextTheme _buildTextTheme(TextTheme base) {
         headline6: base.caption.copyWith(
           fontWeight: FontWeight.bold,
           fontSize: 20,
+          letterSpacing: defaultLetterSpacing,
+        ),
+        bodyText2: base.caption.copyWith(
+          fontSize: 12,
           letterSpacing: defaultLetterSpacing,
         ),
       )
