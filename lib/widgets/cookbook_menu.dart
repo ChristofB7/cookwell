@@ -29,7 +29,7 @@ class _RecipeMenuState extends State<RecipeMenu> {
       body: SingleChildScrollView(
           child: Column(
             children: [
-              _createHeader("MyCookbook", colorScheme, textTheme),
+              _createHeader("MYCOOKBOOK", colorScheme, textTheme),
               FutureBuilder<List<Recipe>>(
                   future: savedRecipes,
                   builder: (BuildContext context,
@@ -50,7 +50,7 @@ class _RecipeMenuState extends State<RecipeMenu> {
                         : SizedBox();
                   },
                 ),
-              _createHeader("All Recipes", colorScheme, textTheme),
+              _createHeader("ALL RECIPES", colorScheme, textTheme),
               ListView(
                 shrinkWrap: true,
                 scrollDirection: Axis.vertical,

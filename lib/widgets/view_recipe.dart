@@ -48,7 +48,7 @@ class _ViewRecipeState extends State<ViewRecipe> {
                       indent: 40,
                       endIndent: 40,
                     ),
-                    _createHeader("Ingredients", colorScheme, textTheme),
+                    _createHeader("INGREDIENTS", colorScheme, textTheme),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: recipe.ingredients
@@ -56,7 +56,7 @@ class _ViewRecipeState extends State<ViewRecipe> {
                               ingredient, colorScheme, context))
                           .toList(),
                     ),
-                    _createHeader("Directions", colorScheme, textTheme),
+                    _createHeader("DIRECTIONS", colorScheme, textTheme),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: recipe.directions
@@ -73,7 +73,7 @@ class _ViewRecipeState extends State<ViewRecipe> {
                           )
                           .toList(),
                     ),
-                    _createHeader("Notes", colorScheme, textTheme),
+                    _createHeader("NOTES", colorScheme, textTheme),
                     Text(
                       '${recipe.notes == null ? '\n\n' : recipe.notes}',
                       style: textTheme.caption,
