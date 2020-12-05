@@ -71,6 +71,7 @@ class _MyHomePageState extends State<MyHomePage> {
           child: new Column(
             children: <Widget>[
               navigationItemListTitle(RECIPES, 0),
+              navigationItemListTitle(RECIPES, 0),
               navigationItemListTitle(SHOPPING, 1),
             ],
           ),

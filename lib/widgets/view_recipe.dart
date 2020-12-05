@@ -1,7 +1,6 @@
 import 'package:cookwell/db/db_provider.dart';
 import 'package:cookwell/model/ingredient.dart';
 import 'package:cookwell/model/recipe.dart';
-import 'package:cookwell/widgets/cookbook_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:cookwell/model/shopping_item.dart';
