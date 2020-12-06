@@ -1,12 +1,16 @@
 import 'package:cookwell/db/db_provider.dart';
+import 'package:cookwell/widgets/add_recipe.dart';
 import 'package:cookwell/widgets/cookbook_menu.dart';
 import 'package:cookwell/widgets/shopping_menu.dart';
 import 'package:cookwell/widgets/view_recipe.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'widgets/search_recipe.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await DatabaseProvider().initDatabase();
+  //await Firebase.initializeApp();
   runApp(MyApp());
 }
 
@@ -14,13 +18,15 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       theme: _buildColorTheme(),
       title: 'CookWell',
       home: MyHomePage(),
       routes: {
         '/view-recipe': (context) => ViewRecipe(),
-        '/add-recipe': (context) => null,
-        '/all-recipes': (context) => RecipeMenu()
+        '/add-recipe': (context) => AddRecipe(),
+        '/all-recipes': (context) => RecipeMenu(),
+        '/search-recipe': (context) => SearchRecipe()
       },
     );
   }
@@ -65,14 +71,15 @@ class _MyHomePageState extends State<MyHomePage> {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
     return Scaffold(
-      drawer: new Drawer(
-        child: new Container(
+      drawer: Drawer(
+        child: Container(
           margin: EdgeInsets.only(top: 20.0),
-          child: new Column(
+          child: Column(
             children: <Widget>[
-              navigationItemListTitle(RECIPES, 0),
-              navigationItemListTitle(RECIPES, 0),
-              navigationItemListTitle(SHOPPING, 1),
+              navigationItemListTitle(RECIPES, _recipeMenu),
+              navigationItemListTitle(SHOPPING, _shoppingMenu),
+              navigationItemListTitle("Search", SearchRecipe())
+
             ],
           ),
         ),
@@ -102,17 +109,19 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  Widget navigationItemListTitle(String title, int index) {
-    return new ListTile(
-      title: new Text(
+  Widget navigationItemListTitle(String title, Widget widget) {
+    return ListTile(
+      title: Text(
         title,
-        style: new TextStyle(
+        style: TextStyle(
             color: Theme.of(context).colorScheme.secondaryVariant,
             fontSize: 22.0),
       ),
       onTap: () {
         Navigator.pop(context);
-        changeTab(index);
+        setState(() {
+          _currentPage = widget;
+        });
       },
     );
   }
@@ -124,8 +133,8 @@ ThemeData _buildColorTheme() {
     colorScheme: ColorTheme,
     textTheme: _buildTextTheme(base.textTheme),
     hintColor: ColorTheme.primary,
-    inputDecorationTheme: new InputDecorationTheme(
-          labelStyle: new TextStyle(color: ColorTheme.primary.withOpacity(0.70)),
+    inputDecorationTheme: InputDecorationTheme(
+          labelStyle: TextStyle(color: ColorTheme.primary.withOpacity(0.70)),
         enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Color(0x00FFFFFF),),),
         focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Color(0x00FFFFFF),),),
         border: UnderlineInputBorder(borderSide: BorderSide(color: Color(0x00FFFFFF),),),

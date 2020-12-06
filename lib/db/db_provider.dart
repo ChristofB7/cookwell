@@ -163,6 +163,20 @@ class DatabaseProvider {
     return Recipe.fromMap(data.first);
   }
 
+  static Future<List<Recipe>> searchRecipes(String query) async {
+
+    final sql = '''SELECT * FROM $TABLE_RECIPES
+    WHERE $COLUMN_NAME LIKE ?''';
+
+    List<dynamic> params = ['%' + query + '%'];
+    final data = await db.rawQuery(sql, params);
+
+    List<Recipe> list =
+    data.isNotEmpty ? data.toList().map((c) => Recipe.fromMap(c)).toList() : null;
+
+    return list;
+  }
+
   static Future<void> addRecipe(Recipe recipe) async {
     final sql = '''INSERT INTO $TABLE_RECIPES
     (

@@ -3,6 +3,8 @@ import 'package:cookwell/model/shopping_item.dart';
 import 'package:flutter/material.dart';
 import 'package:numberpicker/numberpicker.dart';
 
+import 'header.dart';
+
 class ShoppingMenu extends StatefulWidget {
   ShoppingMenu();
 
@@ -141,11 +143,8 @@ class _ShoppingMenuState extends State<ShoppingMenu> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _createHeader(
-              "MY LIST",
-              colorScheme,
-              textTheme,
-              IconButton(
+            Header(header: 'MY LIST',
+              icon: IconButton(
                 icon: Icon(
                   Icons.ios_share,
                   color: colorScheme.primary,
@@ -169,11 +168,7 @@ class _ShoppingMenuState extends State<ShoppingMenu> {
               },
             ),
             _newItem(colorScheme, textTheme),
-            _createHeader(
-              "COMPLETED",
-              colorScheme,
-              textTheme,
-              IconButton(
+            Header(header: 'COMPLETED', icon: IconButton(
                 icon: Icon(
                   Icons.delete,
                   color: colorScheme.primary,
@@ -316,36 +311,6 @@ class _ShoppingMenuState extends State<ShoppingMenu> {
           ],
         ),
       ),
-    );
-  }
-
-  Column _createHeader(String header, ColorScheme colorScheme,
-      TextTheme textTheme, IconButton icon) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(15, 8, 0, 0),
-          child: Row(
-            children: [
-              Expanded(
-                child: Text(
-                  header,
-                  style: textTheme.headline6,
-                ),
-              ),
-              icon,
-            ],
-          ),
-        ),
-        Divider(
-          color: colorScheme.secondary,
-          height: 10,
-          thickness: 1,
-          indent: 3,
-          endIndent: 3,
-        ),
-      ],
     );
   }
 }
