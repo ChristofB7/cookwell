@@ -3,7 +3,7 @@ import 'package:cookwell/model/shopping_item.dart';
 import 'package:flutter/material.dart';
 import 'package:numberpicker/numberpicker.dart';
 
-import 'header.dart';
+import '../header.dart';
 
 class ShoppingMenu extends StatefulWidget {
   ShoppingMenu();
@@ -18,11 +18,6 @@ class _ShoppingMenuState extends State<ShoppingMenu> {
 
   final itemController = TextEditingController();
   final quantityController = TextEditingController();
-
-  @override
-  initState() {
-    super.initState();
-  }
 
   void _submitData() async {
     final _item = itemController.text;
@@ -121,7 +116,7 @@ class _ShoppingMenuState extends State<ShoppingMenu> {
         ),
         actions: <Widget>[
           TextButton(
-            child: Text('Ok'),
+            child: Text('Ok', style: TextStyle(fontSize: 20),),
             onPressed: () {
               Navigator.of(context).pop();
               setState(() {});
@@ -147,7 +142,6 @@ class _ShoppingMenuState extends State<ShoppingMenu> {
               icon: IconButton(
                 icon: Icon(
                   Icons.ios_share,
-                  color: colorScheme.primary,
                 ),
                 onPressed: () {
                   shareShoppingList(context);
@@ -171,7 +165,6 @@ class _ShoppingMenuState extends State<ShoppingMenu> {
             Header(header: 'COMPLETED', icon: IconButton(
                 icon: Icon(
                   Icons.delete,
-                  color: colorScheme.primary,
                 ),
                 onPressed: () => _deleteAllChecked(),
               ),
@@ -211,7 +204,6 @@ class _ShoppingMenuState extends State<ShoppingMenu> {
           return false;
       },
       direction: DismissDirection.endToStart,
-      background: Container(color: Colors.red),
       onDismissed: (direction) {
         setState(() {
           DatabaseProvider.deleteShoppingItem(item);
@@ -226,7 +218,7 @@ class _ShoppingMenuState extends State<ShoppingMenu> {
             children: <Widget>[
               Checkbox(
                 value: item.checked,
-                onChanged: (bool value) {
+                onChanged: (_) {
                   DatabaseProvider.toggleItem(item);
                   setState(() {
                     checkedList = DatabaseProvider.getCheckedItems();

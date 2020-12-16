@@ -124,7 +124,6 @@ class _ViewRecipeState extends State<ViewRecipe> {
                     DatabaseProvider.addRecipe(recipe);
                   }
                 });
-                recipe.encodeImage();
                 final snackBar = SnackBar(
                     content: recipe.saved ? Text('Removed from MyCookbook',
                       style: TextStyle(color: colorScheme.primary),) : Text('Added to MyCookbook',

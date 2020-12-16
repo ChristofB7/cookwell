@@ -2,6 +2,7 @@ import 'package:cookwell/model/unit.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/foundation.dart';
 
+// TODO optional boolean
 class Ingredient {
   String name;
   //look to switch to enum

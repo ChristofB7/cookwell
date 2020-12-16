@@ -1,7 +1,9 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cookwell/model/recipe.dart';
 import 'package:cookwell/model/shopping_item.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -47,6 +49,7 @@ class DatabaseProvider {
           $COLUMN_NAME TEXT,
           $COLUMN_INGREDIENTS TEXT,
           $COLUMN_DIRECTIONS TEXT,
+          $COLUMN_IMAGE BLOB,
           $COLUMN_COOKINGTIME INTEGER,
           $COLUMN_PREPTIME INTEGER,
           $COLUMN_SERVINGSIZE REAL,
@@ -152,8 +155,18 @@ class DatabaseProvider {
     return data.isNotEmpty ? data.toList().map((c) => Recipe.fromMap(c)).toList() : null;
   }
 
-  static Future<Recipe> getRecipe(int id) async {
+  static Future<List<Recipe>> getFirebaseRecipes() async {
+    CollectionReference recipesDatabase = FirebaseFirestore.instance.collection('recipes');
 
+    return await recipesDatabase.get().then((querySnapshot) => querySnapshot.docs.map((doc) => Recipe.fromDBMap(doc.id, doc.data())).toList());
+  }
+
+  static Future<List<Recipe>> searchFirebaseRecipes(String query) async {
+    CollectionReference recipesDatabase = FirebaseFirestore.instance.collection('recipes');
+    return await recipesDatabase.where("searchQueries",arrayContains: query).get().then((querySnapshot) => querySnapshot.docs.map((doc) => Recipe.fromDBMap(doc.id, doc.data())).toList());
+  }
+
+  static Future<Recipe> getRecipe(int id) async {
     final sql = '''SELECT * FROM $TABLE_RECIPES
     WHERE $COLUMN_RECIPE_ID = ?''';
 
@@ -164,7 +177,6 @@ class DatabaseProvider {
   }
 
   static Future<List<Recipe>> searchRecipes(String query) async {
-
     final sql = '''SELECT * FROM $TABLE_RECIPES
     WHERE $COLUMN_NAME LIKE ?''';
 
@@ -184,15 +196,17 @@ class DatabaseProvider {
       $COLUMN_NAME,
       $COLUMN_INGREDIENTS,
       $COLUMN_DIRECTIONS,
+      $COLUMN_IMAGE,
       $COLUMN_COOKINGTIME,
       $COLUMN_PREPTIME,
       $COLUMN_SERVINGSIZE,
       $COLUMN_NOTES,
       $COLUMN_SAVED
     )
-    VALUES (?,?,?,?,?,?,?,?, 1)''';
+    VALUES (?,?,?,?,?,?,?,?,?,?)''';
     //$COLUMN_IMAGE,
 
+    //TODO Unhandled Exception: DatabaseException(Error Domain=FMDatabase Code=1555 "UNIQUE constraint failed: recipes.id"
     await db.rawInsert(sql, recipe.toDynamicList());
 
   }

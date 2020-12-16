@@ -1,5 +1,4 @@
 import 'package:cookwell/db/db_provider.dart';
-import 'package:cookwell/model/dummy_data.dart';
 import 'package:cookwell/model/recipe.dart';
 import 'package:cookwell/widgets/recipe_tile.dart';
 import 'package:cookwell/widgets/search_recipe.dart';
