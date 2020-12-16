@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'header.dart';
 
 class RecipeMenu extends StatefulWidget {
-
   static _RecipeMenuState refreshMenu() {
     return _RecipeMenuState();
   }
@@ -17,73 +16,77 @@ class RecipeMenu extends StatefulWidget {
 }
 
 class _RecipeMenuState extends State<RecipeMenu> {
-  Future<List<Recipe>> savedRecipes;
+  Future<List<Recipe>> localRecipes;
+  Future<List<Recipe>> dbRecipes;
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
 
-    savedRecipes = DatabaseProvider.getRecipes();
+    localRecipes = DatabaseProvider.getRecipes();
+    dbRecipes = DatabaseProvider.getFirebaseRecipes();
 
     return Scaffold(
       backgroundColor: colorScheme.background,
       // TODO refresh page on Navigation pop
       body: SingleChildScrollView(
-          child: Column(
-            children: [
-              // TODO : make this into own widget
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [SearchRecipe()],
-              ),
-              Header(header: 'MY COOKBOOK'),
-              SizedBox(
-                height: MediaQuery.of(context).size.height/3,
-                child: FutureBuilder<List<Recipe>>(
-                    future: savedRecipes,
-                    builder: (BuildContext context,
-                        AsyncSnapshot<List<Recipe>> snapshot) {
-                      return snapshot.hasData
-                          ? ListView(
+        child: Column(
+          children: [
+            // TODO : make this into own widget
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [SearchRecipe()],
+            ),
+            Header(header: 'MY COOKBOOK'),
+            FutureBuilder<List<Recipe>>(
+              future: localRecipes,
+              builder:
+                  (BuildContext context, AsyncSnapshot<List<Recipe>> snapshot) {
+                //TODO fix async of images
+                return snapshot.hasData
+                    ? ListView(
                         shrinkWrap: true,
-                          children: snapshot.data
-                              .map((recipe) => GestureDetector(
-                            onTap: () {
-                              Navigator.of(context).pushNamed(
-                                '/view-recipe',
-                                arguments: recipe,
-                              );
-                            },
-                            child: RecipeTile(recipe, context),
-                          ))
-                              .toList())
-                          : SizedBox();
-                    },
-                  ),
-              ),
-              Header(header: 'ALL RECIPES',),
-              SizedBox(
-                height: MediaQuery.of(context).size.height/3,
-                child: ListView(
-                  shrinkWrap: true,
-                  scrollDirection: Axis.vertical,
-                  children: dummy_recipes
-                      .map((recipe) => GestureDetector(
-                            onTap: () {
-                              Navigator.of(context).pushNamed(
-                                '/view-recipe',
-                                arguments: recipe,
-                              );
-                            },
-                            child: RecipeTile(recipe, context),
-                          ))
-                      .toList(),
-                ),
-              ),
-            ],
-          ),
+                        children: snapshot.data
+                            .map((recipe) => GestureDetector(
+                                  onTap: () {
+                                    Navigator.of(context).pushNamed(
+                                      '/view-recipe',
+                                      arguments: recipe,
+                                    );
+                                  },
+                                  child: RecipeTile(recipe, context),
+                                ))
+                            .toList())
+                    : SizedBox();
+              },
+            ),
+            Header(
+              header: 'ALL RECIPES',
+            ),
+            FutureBuilder<List<Recipe>>(
+              future: dbRecipes,
+              builder:
+                  (BuildContext context, AsyncSnapshot<List<Recipe>> snapshot) {
+                return snapshot.hasData
+                    ? ListView(
+                        shrinkWrap: true,
+                        children: snapshot.data
+                            .map((recipe) => GestureDetector(
+                                  child: RecipeTile(recipe, context),
+                                  onTap: () {
+                                    Navigator.of(context).pushNamed(
+                                      '/view-recipe',
+                                      arguments: recipe,
+                                    );
+                                  },
+                                ))
+                            .toList())
+                    : SizedBox();
+              },
+            ),
+          ],
         ),
+      ),
     );
   }
 }

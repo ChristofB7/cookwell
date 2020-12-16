@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cookwell/model/recipe.dart';
 import 'package:cookwell/model/shopping_item.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
