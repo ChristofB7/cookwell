@@ -155,17 +155,6 @@ class DatabaseProvider {
     return data.isNotEmpty ? data.toList().map((c) => Recipe.fromMap(c)).toList() : null;
   }
 
-  static Future<List<Recipe>> getFirebaseRecipes() async {
-    CollectionReference recipesDatabase = FirebaseFirestore.instance.collection('recipes');
-
-    return await recipesDatabase.get().then((querySnapshot) => querySnapshot.docs.map((doc) => Recipe.fromDBMap(doc.id, doc.data())).toList());
-  }
-
-  static Future<List<Recipe>> searchFirebaseRecipes(String query) async {
-    CollectionReference recipesDatabase = FirebaseFirestore.instance.collection('recipes');
-    return await recipesDatabase.where("searchQueries",arrayContains: query).get().then((querySnapshot) => querySnapshot.docs.map((doc) => Recipe.fromDBMap(doc.id, doc.data())).toList());
-  }
-
   static Future<Recipe> getRecipe(int id) async {
     final sql = '''SELECT * FROM $TABLE_RECIPES
     WHERE $COLUMN_RECIPE_ID = ?''';
@@ -232,4 +221,16 @@ class DatabaseProvider {
 
     return data.isNotEmpty;
   }
+
+  static Future<List<Recipe>> getFirebaseRecipes() async {
+    CollectionReference recipesDatabase = FirebaseFirestore.instance.collection('recipes');
+
+    return await recipesDatabase.get().then((querySnapshot) => querySnapshot.docs.map((doc) => Recipe.fromDBMap(doc.id, doc.data())).toList());
+  }
+
+  static Future<List<Recipe>> searchFirebaseRecipes(String query) async {
+    CollectionReference recipesDatabase = FirebaseFirestore.instance.collection('recipes');
+    return await recipesDatabase.where("searchQueries",arrayContains: query).get().then((querySnapshot) => querySnapshot.docs.map((doc) => Recipe.fromDBMap(doc.id, doc.data())).toList());
+  }
+
 }

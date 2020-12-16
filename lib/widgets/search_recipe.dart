@@ -26,7 +26,6 @@ class SearchRecipe extends StatelessWidget {
 }
 
 // TODO: search by ingredients
-// TODO: flexible dynamic spacing
 
 class _SearchRecipeState extends SearchDelegate<String> {
   Future<List<Recipe>> localRecipes;

@@ -119,7 +119,32 @@ class _ViewRecipeState extends State<ViewRecipe> {
               onPressed: () {
                 setState(() {
                   if (recipe.saved) {
-                    DatabaseProvider.deleteRecipe(recipe);
+                    showDialog(
+                        context: context,
+                        builder: (_) => AlertDialog(
+                      title: Text("Remove Recipe"),
+                      content:
+                      Text("Are you sure you would like to remove this recipe from MyCookbook?"),
+                      actions: [
+                        TextButton(
+                          child: Text('Yes'),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                            setState(() {
+                              DatabaseProvider.deleteRecipe(recipe);
+                            });
+                          },
+                        ),
+                        TextButton(
+                          child: Text('No'),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                            setState(() {});
+                          },
+                        ),
+                      ],
+                    )
+                    );
                   } else {
                     DatabaseProvider.addRecipe(recipe);
                   }
