@@ -19,6 +19,15 @@ class _RecipeMenuState extends State<RecipeMenu> {
   Future<List<Recipe>> localRecipes;
   Future<List<Recipe>> dbRecipes;
 
+  _navigateAndDisplaySelection(BuildContext context, Recipe recipe) async {
+    final result =
+    await Navigator.of(context).pushNamed(
+      '/view-recipe',
+      arguments: recipe,
+    );
+    if (result) setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
@@ -48,12 +57,7 @@ class _RecipeMenuState extends State<RecipeMenu> {
                         shrinkWrap: true,
                         children: snapshot.data
                             .map((recipe) => GestureDetector(
-                                  onTap: () {
-                                    Navigator.of(context).pushNamed(
-                                      '/view-recipe',
-                                      arguments: recipe,
-                                    );
-                                  },
+                                  onTap: () => _navigateAndDisplaySelection(context, recipe),
                                   child: RecipeTile(recipe, context),
                                 ))
                             .toList())
@@ -73,12 +77,7 @@ class _RecipeMenuState extends State<RecipeMenu> {
                         children: snapshot.data
                             .map((recipe) => GestureDetector(
                                   child: RecipeTile(recipe, context),
-                                  onTap: () {
-                                    Navigator.of(context).pushNamed(
-                                      '/view-recipe',
-                                      arguments: recipe,
-                                    );
-                                  },
+                                  onTap: () => _navigateAndDisplaySelection(context, recipe),
                                 ))
                             .toList())
                     : SizedBox();

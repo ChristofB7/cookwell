@@ -73,9 +73,12 @@ class _ViewRecipeState extends State<ViewRecipe> {
                           .toList(),
                     ),
                     _createHeader("NOTES", colorScheme, textTheme),
-                    Text(
-                      '${recipe.notes == null ? '\n\n' : recipe.notes}',
-                      style: textTheme.caption,
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        '${recipe.notes == null ? '\n\n' : recipe.notes}',
+                        style: textTheme.caption,
+                      ),
                     ),
                   ],
                 ),
@@ -87,7 +90,8 @@ class _ViewRecipeState extends State<ViewRecipe> {
     );
   }
 
-  Stack _createCard(Recipe recipe, ColorScheme colorScheme, BuildContext context) {
+  Stack _createCard(
+      Recipe recipe, ColorScheme colorScheme, BuildContext context) {
     return Stack(
       children: <Widget>[
         Card(
@@ -98,7 +102,10 @@ class _ViewRecipeState extends State<ViewRecipe> {
             decoration: BoxDecoration(
                 color: colorScheme.primary,
                 image: DecorationImage(
-                    image: recipe.image != null ? recipe.image.image : AssetImage('lib/assets/images/vegetarian.png'), fit: BoxFit.cover)),
+                    image: recipe.image != null
+                        ? recipe.image.image
+                        : AssetImage('lib/assets/images/vegetarian.png'),
+                    fit: BoxFit.cover)),
           ),
         ),
         Row(
@@ -111,52 +118,77 @@ class _ViewRecipeState extends State<ViewRecipe> {
                 color: colorScheme.secondary,
                 size: 30,
               ),
-              onPressed: () => Navigator.pop(context),
+              onPressed: () => Navigator.pop(context, true),
               color: Colors.white,
             ),
             IconButton(
-              icon: recipe.saved ? Icon(Icons.favorite, color: colorScheme.secondary, size: 30,) : Icon(Icons.favorite_border, color: colorScheme.secondary, size: 30,),
+              icon: recipe.saved
+                  ? Icon(
+                      Icons.favorite,
+                      color: colorScheme.secondary,
+                      size: 30,
+                    )
+                  : Icon(
+                      Icons.favorite_border,
+                      color: colorScheme.secondary,
+                      size: 30,
+                    ),
               onPressed: () {
                 setState(() {
                   if (recipe.saved) {
                     showDialog(
                         context: context,
                         builder: (_) => AlertDialog(
-                      title: Text("Remove Recipe"),
-                      content:
-                      Text("Are you sure you would like to remove this recipe from MyCookbook?"),
-                      actions: [
-                        TextButton(
-                          child: Text('Yes'),
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                            setState(() {
-                              DatabaseProvider.deleteRecipe(recipe);
-                            });
-                          },
-                        ),
-                        TextButton(
-                          child: Text('No'),
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                            setState(() {});
-                          },
-                        ),
-                      ],
-                    )
-                    );
+                              title: Text("Remove Recipe"),
+                              content: Text(
+                                  "Are you sure you would like to remove this recipe from MyCookbook?"),
+                              actions: [
+                                TextButton(
+                                  child: Text('Yes'),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                    setState(() {
+                                      DatabaseProvider.deleteRecipe(recipe);
+                                    });
+                                    if (recipe.saved) {
+                                      final snackBar = SnackBar(
+                                          content: Text(
+                                            'Removed from MyCookbook',
+                                            style: TextStyle(
+                                                color: colorScheme.primary),
+                                          ),
+                                          backgroundColor:
+                                              colorScheme.secondary,
+                                          duration: const Duration(
+                                              milliseconds: 500));
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(snackBar);
+                                    }
+                                  },
+                                ),
+                                TextButton(
+                                  child: Text('No'),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                    setState(() {});
+                                  },
+                                ),
+                              ],
+                            ));
                   } else {
                     DatabaseProvider.addRecipe(recipe);
+                    if (!recipe.saved) {
+                      final snackBar = SnackBar(
+                          content: Text(
+                            'Added to MyCookbook',
+                            style: TextStyle(color: colorScheme.primary),
+                          ),
+                          backgroundColor: colorScheme.secondary,
+                          duration: const Duration(milliseconds: 500));
+                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                    }
                   }
                 });
-                final snackBar = SnackBar(
-                    content: recipe.saved ? Text('Removed from MyCookbook',
-                      style: TextStyle(color: colorScheme.primary),) : Text('Added to MyCookbook',
-                      style: TextStyle(color: colorScheme.primary),),
-                    backgroundColor: colorScheme.secondary,
-                    duration: const Duration(milliseconds: 500));
-                ScaffoldMessenger.of(context).showSnackBar(snackBar);
-
                 recipe.saved = !recipe.saved;
               },
               color: Colors.white,
