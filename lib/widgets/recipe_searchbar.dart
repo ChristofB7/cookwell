@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 
 import 'dart:core';
 
-class SearchRecipe extends StatelessWidget {
+class RecipeSearchBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
@@ -16,7 +16,7 @@ class SearchRecipe extends StatelessWidget {
           color: colorScheme.primary,
         ),
         onPressed: () {
-          showSearch(context: context, delegate: _SearchRecipeState());
+          showSearch(context: context, delegate: RecipeSearchBarState());
         });
   }
 }
@@ -24,11 +24,11 @@ class SearchRecipe extends StatelessWidget {
 // TODO: search by ingredients
 // TODO: stateful searching
 
-class _SearchRecipeState extends SearchDelegate<String> {
+class RecipeSearchBarState extends SearchDelegate<String> {
   Future<List<Recipe>> localRecipes;
   Future<List<Recipe>> dbRecipes;
 
-  _SearchRecipeState() {
+  RecipeSearchBarState() {
     this.localRecipes = DatabaseProvider.getRecipes();
     this.dbRecipes = DatabaseProvider.getFirebaseRecipes();
   }
@@ -71,11 +71,9 @@ class _SearchRecipeState extends SearchDelegate<String> {
   Widget buildSuggestions(BuildContext context) {
     final localRecipesList =
         query.isEmpty ? localRecipes : DatabaseProvider.searchRecipes(query);
-
     final databaseRecipesList = query.isEmpty
         ? dbRecipes
         : DatabaseProvider.searchFirebaseRecipes(query);
-
     return buildLists(localRecipesList, databaseRecipesList, context);
   }
 

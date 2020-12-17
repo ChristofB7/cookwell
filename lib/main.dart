@@ -1,16 +1,15 @@
 import 'package:cookwell/db/db_provider.dart';
 import 'package:cookwell/widgets/add_recipe.dart';
 import 'package:cookwell/widgets/recipes_menu.dart';
+import 'package:cookwell/widgets/search_recipes.dart';
 import 'package:cookwell/widgets/shopping_menu.dart';
 import 'package:cookwell/widgets/view_recipe.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'widgets/search_recipe.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await DatabaseProvider().initDatabase();
-  //await Firebase.initializeApp();
+  await Future.wait([DatabaseProvider().initDatabase(), Firebase.initializeApp()]);
   runApp(MyApp());
 }
 
@@ -26,7 +25,7 @@ class MyApp extends StatelessWidget {
         '/view-recipe': (context) => ViewRecipe(),
         '/add-recipe': (context) => AddRecipe(),
         '/all-recipes': (context) => RecipeMenu(),
-        '/search-recipe': (context) => SearchRecipe()
+        '/search-recipe': (context) => SearchRecipes()
       },
     );
   }
@@ -78,7 +77,7 @@ class _MyHomePageState extends State<MyHomePage> {
             children: <Widget>[
               navigationItemListTitle(RECIPES, _recipeMenu),
               navigationItemListTitle(SHOPPING, _shoppingMenu),
-              navigationItemListTitle("Search", SearchRecipe())
+              navigationItemListTitle("Search", SearchRecipes())
 
             ],
           ),
@@ -133,13 +132,15 @@ ThemeData _buildColorTheme() {
     colorScheme: ColorTheme,
     textTheme: _buildTextTheme(base.textTheme),
     hintColor: ColorTheme.primary,
+    iconTheme: IconThemeData(color: ColorTheme.primary),
+    accentIconTheme: IconThemeData(color: ColorTheme.primary),
     inputDecorationTheme: InputDecorationTheme(
-          labelStyle: TextStyle(color: ColorTheme.primary.withOpacity(0.70)),
+        labelStyle: TextStyle(color: ColorTheme.primary.withOpacity(0.70)),
         enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Color(0x00FFFFFF),),),
         focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Color(0x00FFFFFF),),),
         border: UnderlineInputBorder(borderSide: BorderSide(color: Color(0x00FFFFFF),),),
     ),
-      unselectedWidgetColor: ColorTheme.primary,
+    unselectedWidgetColor: ColorTheme.primary,
   );
 }
 

@@ -20,7 +20,6 @@ class _ViewRecipeState extends State<ViewRecipe> {
     final textTheme = Theme.of(context).textTheme;
 
     recipe = ModalRoute.of(context).settings.arguments as Recipe;
-
     return Scaffold(
       backgroundColor: colorScheme.background,
       body: CustomScrollView(

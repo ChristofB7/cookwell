@@ -23,7 +23,7 @@ class DatabaseProvider {
   static const COLUMN_NAME = "name";
   static const COLUMN_INGREDIENTS = "ingredients";
   static const COLUMN_DIRECTIONS = "directions";
-  //static const COLUMN_IMAGE = "image";
+  static const COLUMN_IMAGE = "image";
   static const COLUMN_COOKINGTIME = "cookingTime";
   static const COLUMN_PREPTIME = "prepTime";
   static const COLUMN_SERVINGSIZE = "servingSize";

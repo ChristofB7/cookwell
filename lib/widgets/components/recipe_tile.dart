@@ -21,18 +21,18 @@ class RecipeTile extends StatelessWidget {
       margin: EdgeInsets.symmetric(vertical: 3, horizontal: 5),
       child: ListTile(
         tileColor: colorScheme.background,
-        leading: ClipRRect(
-          borderRadius: BorderRadius.circular(8.0),
-          child: recipe.image != null ? recipe.image : Image(
-              image: AssetImage('lib/assets/images/vegetarian.png')),
+        leading: Container(
+          height: 50,
+          width: 60,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(8.0),
+            child: FittedBox(child: Image(image: recipe.image.image ?? AssetImage('lib/assets/images/vegetarian.png'),), fit: BoxFit.cover),
+          ),
         ),
         title: Text(recipe.name),
-        // TODO ? add description
-        // TODO TOTAL COOKING TIME = COOKING + PREP TIME
         // TODO ADD ICONS
         subtitle: Row(children: [
-          Text(
-              "total time: $totalTime serving size: ${recipe.servingSize
+          Text("total time: $totalTime serving size: ${recipe.servingSize
                   .toStringAsFixed(0)}",
               style: textTheme.caption),
         ]),

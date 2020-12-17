@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:cookwell/db/db_provider.dart';
 import 'package:cookwell/model/ingredient.dart';
 import 'package:flutter/foundation.dart';
@@ -6,8 +8,11 @@ import 'dart:convert';
 
 import 'package:network_image_to_byte/network_image_to_byte.dart';
 
+//TODO add dbId to recipe class
 class Recipe {
+  String dbId;
   int id;
+  String dbid;
   String name;
   List<Ingredient> ingredients;
   List<String> directions;
@@ -47,7 +52,7 @@ class Recipe {
     DatabaseProvider.COLUMN_SAVED: 1,
   };
 
-  Recipe.fromMap(Map<String, dynamic> map)   {
+  Recipe.fromMap(Map<String, dynamic> map) {
     id = map[DatabaseProvider.COLUMN_RECIPE_ID];
     name = name = _capitalizeName(map[DatabaseProvider.COLUMN_NAME]);
     ingredients = _decodeIngredients(json.decode(map[DatabaseProvider.COLUMN_INGREDIENTS]));
@@ -60,8 +65,7 @@ class Recipe {
     saved = map[DatabaseProvider.COLUMN_SAVED] == 1;
   }
 
-  Recipe.fromDBMap(String dbId, Map<String, dynamic> map) {
-    dbid = dbId;
+  Recipe.fromDBMap(String id, Map<String, dynamic> map) {
     name = _capitalizeName(map[DatabaseProvider.COLUMN_NAME]);
     image = Image.network(map[DatabaseProvider.COLUMN_IMAGE]);
     ingredients = _decodeDBIngredients(map[DatabaseProvider.COLUMN_INGREDIENTS]);
