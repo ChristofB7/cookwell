@@ -16,15 +16,15 @@ class ShoppingItem {
   });
 
   Map<String, dynamic> toMap() =>{
-    DatabaseProvider.COLUMN_SHOP_ID: id,
-    DatabaseProvider.COLUMN_ITEM: item,
+    DatabaseProvider.COLUMN_ID: id,
+    DatabaseProvider.COLUMN_NAME: item,
     DatabaseProvider.COLUMN_CHECKED: checked ? 1 : 0,
     DatabaseProvider.COLUMN_QUANTITY: quantity,
     };
 
   ShoppingItem.fromMap(Map<String, dynamic> map)   {
-    id = map[DatabaseProvider.COLUMN_SHOP_ID];
-    item = map[DatabaseProvider.COLUMN_ITEM];
+    id = map[DatabaseProvider.COLUMN_ID];
+    item = map[DatabaseProvider.COLUMN_NAME];
     quantity = map[DatabaseProvider.COLUMN_QUANTITY];
     checked = map[DatabaseProvider.COLUMN_CHECKED] == 1;
   }

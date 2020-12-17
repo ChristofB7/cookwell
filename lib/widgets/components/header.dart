@@ -19,11 +19,7 @@ class Header extends StatelessWidget {
           child: Row(
             children: [
               Expanded(
-                child: Text(
-                  header,
-                  style: textTheme.headline6,
-                ),
-              ),
+                child: Text(header, style: textTheme.headline6,),),
               icon ?? SizedBox(),
             ],
           ),

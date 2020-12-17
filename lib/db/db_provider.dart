@@ -12,15 +12,15 @@ class DatabaseProvider {
   static const DB_NAME = "cookwell_db";
   static const DB_VERSION = 1;
 
+  static const COLUMN_ID = "id";
+  static const COLUMN_NAME = "name";
+
   static const TABLE_SHOPPING = "shopping";
-  static const COLUMN_SHOP_ID = "id";
-  static const COLUMN_ITEM = "name";
   static const COLUMN_QUANTITY = "quantity";
   static const COLUMN_CHECKED = "checked";
 
   static const TABLE_RECIPES = "recipes";
-  static const COLUMN_RECIPE_ID = "id";
-  static const COLUMN_NAME = "name";
+  static const COLUMN_RECIPE_DBID = "dbId";
   static const COLUMN_INGREDIENTS = "ingredients";
   static const COLUMN_DIRECTIONS = "directions";
   static const COLUMN_IMAGE = "image";
@@ -49,8 +49,8 @@ class DatabaseProvider {
     await db.execute(
         '''
       CREATE TABLE $TABLE_SHOPPING (
-          $COLUMN_SHOP_ID INTEGER PRIMARY KEY,
-          $COLUMN_ITEM TEXT,
+          $COLUMN_ID INTEGER PRIMARY KEY,
+          $COLUMN_NAME TEXT,
           $COLUMN_QUANTITY INTEGER,
           $COLUMN_CHECKED INTEGER
           )
@@ -59,7 +59,8 @@ class DatabaseProvider {
 
     await db.execute('''
             CREATE TABLE $TABLE_RECIPES (
-          $COLUMN_RECIPE_ID INTEGER PRIMARY KEY,
+          $COLUMN_ID INTEGER PRIMARY KEY,
+          $COLUMN_RECIPE_DBID TEXT,
           $COLUMN_NAME TEXT,
           $COLUMN_INGREDIENTS TEXT,
           $COLUMN_DIRECTIONS TEXT,
@@ -98,7 +99,7 @@ class DatabaseProvider {
 
   static Future<ShoppingItem> getShoppingItem(int id) async {
     final sql = '''SELECT * FROM $TABLE_SHOPPING
-    WHERE $COLUMN_SHOP_ID = ?''';
+    WHERE $COLUMN_ID = ?''';
 
     List<dynamic> params = [id];
     final data = await db.rawQuery(sql, params);
@@ -109,8 +110,8 @@ class DatabaseProvider {
   static Future<void> addShoppingItem(ShoppingItem item) async {
     final sql = '''INSERT INTO $TABLE_SHOPPING
     (
-      $COLUMN_SHOP_ID,
-      $COLUMN_ITEM,
+      $COLUMN_ID,
+      $COLUMN_NAME,
       $COLUMN_QUANTITY,
       $COLUMN_CHECKED
     )
@@ -120,13 +121,13 @@ class DatabaseProvider {
 
   static Future<void> deleteShoppingItem(ShoppingItem item) async {
     await db.delete(TABLE_SHOPPING,
-        where: '$COLUMN_SHOP_ID = ?',
+        where: '$COLUMN_ID = ?',
         whereArgs: [item.id]);
   }
 
   static Future<void> updateShoppingItem(ShoppingItem item) async {
     await db.update(TABLE_SHOPPING, item.toMap(),
-        where: '$COLUMN_SHOP_ID = ?',
+        where: '$COLUMN_ID = ?',
         whereArgs: [item.id]);
   }
 
@@ -138,7 +139,7 @@ class DatabaseProvider {
         checked: !item.checked);
 
     await db.update(TABLE_SHOPPING, toggle.toMap(),
-        where: '$COLUMN_SHOP_ID = ?', whereArgs: [item.id]);
+        where: '$COLUMN_ID = ?', whereArgs: [item.id]);
   }
 
   static Future<List<Recipe>> getRecipes() async {
@@ -148,7 +149,7 @@ class DatabaseProvider {
 
   static Future<Recipe> getRecipe(int id) async {
     final sql = '''SELECT * FROM $TABLE_RECIPES
-    WHERE $COLUMN_RECIPE_ID = ?''';
+    WHERE $COLUMN_ID = ?''';
 
     List<dynamic> params = [id];
     final data = await db.rawQuery(sql, params);
@@ -169,10 +170,11 @@ class DatabaseProvider {
     return list;
   }
 
-  static Future<void> addRecipe(Recipe recipe) async {
+  static Future<bool> addRecipe(Recipe recipe) async {
     final sql = '''INSERT INTO $TABLE_RECIPES
     (
-      $COLUMN_RECIPE_ID,
+      $COLUMN_ID,
+      $COLUMN_RECIPE_DBID,
       $COLUMN_NAME,
       $COLUMN_INGREDIENTS,
       $COLUMN_DIRECTIONS,
@@ -183,31 +185,40 @@ class DatabaseProvider {
       $COLUMN_NOTES,
       $COLUMN_SAVED
     )
-    VALUES (?,?,?,?,?,?,?,?,?,?)''';
+    VALUES (?,?,?,?,?,?,?,?,?,?,?)''';
 
-    //TODO Add DBID SO not saved twice!!!
-    //TODO Unhandled Exception: DatabaseException(Error Domain=FMDatabase Code=1555 "UNIQUE constraint failed: recipes.id"
-    await db.rawInsert(sql, recipe.toDynamicList());
-
+    final alreadySaved = await checkDBRecipeSaved(recipe.dbId) || await checkRecipeSaved(recipe.id);
+    if (!alreadySaved) await db.rawInsert(sql, recipe.toDynamicList());
+    return alreadySaved;
   }
 
   static Future<void> deleteRecipe(Recipe recipe) async {
     await db.delete(TABLE_RECIPES,
-        where: '$COLUMN_RECIPE_ID = ?',
-        whereArgs: [recipe.id]);
+        where: '$COLUMN_ID = ? OR $COLUMN_RECIPE_DBID = ?',
+        whereArgs: [recipe.id ?? "", recipe.dbId ?? ""]);
   }
 
   static Future<void> updateRecipe(Recipe recipe) async {
     await db.update(TABLE_RECIPES, recipe.toMap(),
-        where: '$COLUMN_RECIPE_ID = ?',
+        where: '$COLUMN_ID = ?',
         whereArgs: [recipe.id]);
   }
 
   static Future<bool> checkRecipeSaved(int id) async {
     final sql = '''SELECT * FROM $TABLE_RECIPES
-    WHERE $COLUMN_RECIPE_ID = ?''';
+    WHERE $COLUMN_ID = ?''';
 
     List<dynamic> params = [id];
+    final data = await db.rawQuery(sql, params);
+
+    return data.isNotEmpty;
+  }
+
+  static Future<bool> checkDBRecipeSaved(String dbId) async {
+    final sql = '''SELECT * FROM $TABLE_RECIPES
+    WHERE $COLUMN_RECIPE_DBID = ?''';
+
+    List<dynamic> params = [dbId];
     final data = await db.rawQuery(sql, params);
 
     return data.isNotEmpty;

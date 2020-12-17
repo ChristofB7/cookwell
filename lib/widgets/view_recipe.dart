@@ -117,7 +117,7 @@ class _ViewRecipeState extends State<ViewRecipe> {
                 color: colorScheme.secondary,
                 size: 30,
               ),
-              onPressed: () => Navigator.pop(context, true),
+              onPressed: () {ScaffoldMessenger.of(context).removeCurrentSnackBar(); Navigator.pop(context, true);},
               color: Colors.white,
             ),
             IconButton(
