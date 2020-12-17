@@ -30,7 +30,22 @@ class DatabaseProvider {
   static const COLUMN_NOTES = "notes";
   static const COLUMN_SAVED = "saved";
 
-  Future<void> createTable(Database db) async {
+  Future<String> getDatabasePath(String dbName) async {
+    final databasePath = await getDatabasesPath();
+    final path = join(databasePath, dbName);
+
+    if (!await Directory(dirname(path)).exists()) {
+      await Directory(dirname(path)).create(recursive: true);
+    }
+    return path;
+  }
+
+  Future<void> initDatabase() async {
+    final path = await getDatabasePath(DB_NAME);
+    db = await openDatabase(path, version: DB_VERSION, onCreate: onCreate);
+  }
+
+  Future<void> createTables(Database db) async {
     await db.execute(
         '''
       CREATE TABLE $TABLE_SHOPPING (
@@ -56,31 +71,11 @@ class DatabaseProvider {
           $COLUMN_SAVED INTEGER
           )
           ''');
-
-    //$COLUMN_IMAGE TEXT,
-  }
-
-  Future<String> getDatabasePath(String dbName) async {
-    final databasePath = await getDatabasesPath();
-    final path = join(databasePath, dbName);
-
-    if (await Directory(dirname(path)).exists()) {
-      //await deleteDatabase(path);
-    } else {
-      await Directory(dirname(path)).create(recursive: true);
-    }
-    return path;
-  }
-
-  Future<void> initDatabase() async {
-    final path = await getDatabasePath(DB_NAME);
-    db = await openDatabase(path, version: DB_VERSION, onCreate: onCreate);
   }
 
   Future<void> onCreate(Database db, int version) async {
-    await createTable(db);
+    await createTables(db);
   }
-
 
   static Future<List<ShoppingItem>> getShoppingList() async {
     final data = await db.rawQuery("SELECT * FROM $TABLE_SHOPPING");
@@ -101,9 +96,7 @@ class DatabaseProvider {
     return list;
   }
 
-
   static Future<ShoppingItem> getShoppingItem(int id) async {
-
     final sql = '''SELECT * FROM $TABLE_SHOPPING
     WHERE $COLUMN_SHOP_ID = ?''';
 
@@ -111,7 +104,6 @@ class DatabaseProvider {
     final data = await db.rawQuery(sql, params);
 
     return ShoppingItem.fromMap(data.first);
-
   }
 
   static Future<void> addShoppingItem(ShoppingItem item) async {
@@ -192,7 +184,6 @@ class DatabaseProvider {
       $COLUMN_SAVED
     )
     VALUES (?,?,?,?,?,?,?,?,?,?)''';
-    //$COLUMN_IMAGE,
 
     //TODO Unhandled Exception: DatabaseException(Error Domain=FMDatabase Code=1555 "UNIQUE constraint failed: recipes.id"
     await db.rawInsert(sql, recipe.toDynamicList());
@@ -231,5 +222,4 @@ class DatabaseProvider {
     CollectionReference recipesDatabase = FirebaseFirestore.instance.collection('recipes');
     return await recipesDatabase.where("searchQueries",arrayContains: query).get().then((querySnapshot) => querySnapshot.docs.map((doc) => Recipe.fromDBMap(doc.id, doc.data())).toList());
   }
-
 }

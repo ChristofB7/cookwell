@@ -3,7 +3,7 @@ import 'package:cookwell/model/shopping_item.dart';
 import 'package:flutter/material.dart';
 import 'package:numberpicker/numberpicker.dart';
 
-import '../header.dart';
+import 'components/header.dart';
 
 class ShoppingMenu extends StatefulWidget {
   ShoppingMenu();

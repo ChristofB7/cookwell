@@ -320,6 +320,13 @@ class _ViewRecipeState extends State<ViewRecipe> {
                   color: colorScheme.primary,
                 ),
               ),
+              ingredient.optional ? Text(
+                " (optional)",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: colorScheme.primary,
+                ),
+              ) : Text(""),
             ],
           ),
         ),

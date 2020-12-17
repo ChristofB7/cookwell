@@ -1,6 +1,6 @@
 import 'package:cookwell/db/db_provider.dart';
 import 'package:cookwell/widgets/add_recipe.dart';
-import 'package:cookwell/widgets/cookbook_menu.dart';
+import 'package:cookwell/widgets/recipes_menu.dart';
 import 'package:cookwell/widgets/shopping_menu.dart';
 import 'package:cookwell/widgets/view_recipe.dart';
 import 'package:firebase_core/firebase_core.dart';

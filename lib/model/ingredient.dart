@@ -2,12 +2,11 @@ import 'package:cookwell/model/unit.dart';
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/foundation.dart';
 
-// TODO optional boolean
 class Ingredient {
   String name;
-  //look to switch to enum
   Unit unit;
   double amount;
+  bool optional;
 
   Ingredient({@required this.name, this.unit, @required this.amount});
 
@@ -15,6 +14,7 @@ class Ingredient {
     "name": name,
     "unit" : unit.toUnitString(),
     "amount": amount,
+    "optional": optional ? 1 : 0
   };
 
   Ingredient.fromMap(Map<String, dynamic> map) {
@@ -24,6 +24,6 @@ class Ingredient {
   }
 
   String toString() {
-    return '${amount % 1 == 0 ? amount.toStringAsFixed(0) : amount.toStringAsFixed(1)} ${unit == null ? '' : unit.toString().substring(unit.toString().indexOf('.') + 1)} $name';
+    return '${amount % 1 == 0 ? amount.toStringAsFixed(0) : amount.toStringAsFixed(1)} ${unit == null ? '' : unit.toString().substring(unit.toString().indexOf('.') + 1)} $name ${optional ? "(optional)" : ""}';
   }
 }
