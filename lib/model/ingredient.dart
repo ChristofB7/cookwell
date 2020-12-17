@@ -20,6 +20,7 @@ class Ingredient {
   Ingredient.fromMap(Map<String, dynamic> map) {
     name = map['name'];
     unit = EnumToString.fromString(Unit.values, map['unit']);
-    amount = map['amount'];
+    amount = map['amount'].toDouble();
+    optional = map['optional'] == 1;
   }
 }
