@@ -5,6 +5,7 @@ class Header extends StatelessWidget {
   final IconButton icon;
 
   Header({@required this.header, this.icon});
+
   @override
   Widget build(BuildContext context) {
     ColorScheme colorScheme = Theme.of(context).colorScheme;

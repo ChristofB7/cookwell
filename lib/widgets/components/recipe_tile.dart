@@ -36,7 +36,6 @@ class RecipeTile extends StatelessWidget {
                   .toStringAsFixed(0)}",
               style: textTheme.caption),
         ]),
-        //trailing: ,
       ),
     );
   }

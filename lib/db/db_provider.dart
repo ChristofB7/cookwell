@@ -185,6 +185,7 @@ class DatabaseProvider {
     )
     VALUES (?,?,?,?,?,?,?,?,?,?)''';
 
+    //TODO Add DBID SO not saved twice!!!
     //TODO Unhandled Exception: DatabaseException(Error Domain=FMDatabase Code=1555 "UNIQUE constraint failed: recipes.id"
     await db.rawInsert(sql, recipe.toDynamicList());
 
@@ -214,7 +215,6 @@ class DatabaseProvider {
 
   static Future<List<Recipe>> getFirebaseRecipes() async {
     CollectionReference recipesDatabase = FirebaseFirestore.instance.collection('recipes');
-
     return await recipesDatabase.get().then((querySnapshot) => querySnapshot.docs.map((doc) => Recipe.fromDBMap(doc.id, doc.data())).toList());
   }
 

@@ -22,8 +22,4 @@ class Ingredient {
     unit = EnumToString.fromString(Unit.values, map['unit']);
     amount = map['amount'];
   }
-
-  String toString() {
-    return '${amount % 1 == 0 ? amount.toStringAsFixed(0) : amount.toStringAsFixed(1)} ${unit == null ? '' : unit.toString().substring(unit.toString().indexOf('.') + 1)} $name ${optional ? "(optional)" : ""}';
-  }
 }

@@ -34,6 +34,7 @@ class ShoppingItem {
     List<ShoppingItem> list = await DatabaseProvider.getUncheckedItems();
     String sharableList = "";
 
+    //TODO: should we add "shopping list" as a title?
     if (list != null) {
       for (ShoppingItem item in list) {
         sharableList += item.toString();
@@ -43,9 +44,4 @@ class ShoppingItem {
           sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
     }
   }
-
-  String toString(){
-    return ("${this.item} ${this.quantity == 0 ? "" : "(${this.quantity})"}\n");
-  }
-
 }

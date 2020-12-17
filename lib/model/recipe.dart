@@ -37,7 +37,7 @@ class Recipe {
   Map<String, dynamic> toMap() =>{
     DatabaseProvider.COLUMN_RECIPE_ID: id,
     DatabaseProvider.COLUMN_NAME: name,
-    DatabaseProvider.COLUMN_INGREDIENTS: json.encode(encodeIngredients()),
+    DatabaseProvider.COLUMN_INGREDIENTS: json.encode(_encodeIngredients()),
     DatabaseProvider.COLUMN_DIRECTIONS: json.encode(directions),
     DatabaseProvider.COLUMN_IMAGE: byteImage,
     DatabaseProvider.COLUMN_COOKINGTIME: cookingTime.inMinutes,
@@ -50,9 +50,9 @@ class Recipe {
   Recipe.fromMap(Map<String, dynamic> map)   {
     id = map[DatabaseProvider.COLUMN_RECIPE_ID];
     name = name = _capitalizeName(map[DatabaseProvider.COLUMN_NAME]);
-    ingredients = decodeIngredients(json.decode(map[DatabaseProvider.COLUMN_INGREDIENTS]));
-    directions = decodeDirections(json.decode(map[DatabaseProvider.COLUMN_DIRECTIONS]));
-    image = decodeImage(map[DatabaseProvider.COLUMN_IMAGE]);
+    ingredients = _decodeIngredients(json.decode(map[DatabaseProvider.COLUMN_INGREDIENTS]));
+    directions = _decodeDirections(json.decode(map[DatabaseProvider.COLUMN_DIRECTIONS]));
+    image = _decodeImage(map[DatabaseProvider.COLUMN_IMAGE]);
     cookingTime = Duration(minutes: map[DatabaseProvider.COLUMN_COOKINGTIME]);
     prepTime = Duration(minutes: map[DatabaseProvider.COLUMN_PREPTIME]);
     servingSize = map[DatabaseProvider.COLUMN_SERVINGSIZE];
@@ -60,11 +60,25 @@ class Recipe {
     saved = map[DatabaseProvider.COLUMN_SAVED] == 1;
   }
 
+  Recipe.fromDBMap(String dbId, Map<String, dynamic> map) {
+    dbid = dbId;
+    name = _capitalizeName(map[DatabaseProvider.COLUMN_NAME]);
+    image = Image.network(map[DatabaseProvider.COLUMN_IMAGE]);
+    ingredients = _decodeDBIngredients(map[DatabaseProvider.COLUMN_INGREDIENTS]);
+    directions = _decodeDirections(map[DatabaseProvider.COLUMN_DIRECTIONS]);
+    cookingTime = Duration(minutes: map[DatabaseProvider.COLUMN_COOKINGTIME]);
+    prepTime = Duration(minutes: map[DatabaseProvider.COLUMN_PREPTIME]);
+    servingSize = map[DatabaseProvider.COLUMN_SERVINGSIZE];
+    notes = map[DatabaseProvider.COLUMN_NOTES];
+    saved = map[DatabaseProvider.COLUMN_SAVED] == 1;
+    _encodeImage(map[DatabaseProvider.COLUMN_IMAGE]);
+  }
+
   List<dynamic> toDynamicList () {
     return [
       id,
       name,
-      json.encode(encodeIngredients()),
+      json.encode(_encodeIngredients()),
       json.encode(directions),
       byteImage,
       cookingTime.inMinutes,
@@ -74,33 +88,34 @@ class Recipe {
       1];
   }
 
-  List<Ingredient> decodeIngredients(List<dynamic> ingredients) {
-    List<Ingredient> decodedList = new List();
-    for(String ingredient in ingredients){
-      decodedList.add(Ingredient.fromMap(json.decode(ingredient)));
-    }
-    return decodedList;
+  Future<void> _encodeImage(String url) async {
+    byteImage = await networkImageToByte(url);
   }
 
-  List<String> decodeDirections(List<dynamic> directions) {
-    List<String> decodedList = new List();
-    for(String direction in directions){
-      decodedList.add(direction);
-    }
-    return decodedList;
-  }
-
-  List<String> encodeIngredients() {
-    List<String> encodedList = new List();
-    for (Ingredient ingredient in ingredients) {
-      encodedList.add(json.encode(ingredient.toMap()));
-    }
-    return encodedList;
-  }
-
-  Image decodeImage(Uint8List bytes) {
+  Image _decodeImage(Uint8List bytes) {
     byteImage = bytes;
     return Image.memory(byteImage);
+  }
+
+  String _capitalizeName(String str) {
+    List<String> improper = ["and", "or", "in", "the", "with", "without"];
+    return str.split(" ").map((str) => !improper.contains(str) ? str[0].toUpperCase() + str.substring(1) : str).join(" ");
+  }
+
+  List<Ingredient> _decodeDBIngredients(List<dynamic> ingredients) {
+    return ingredients.map((ingredient) => Ingredient.fromMap(ingredient)).toList();
+  }
+
+  List<Ingredient> _decodeIngredients(List<dynamic> ingredients) {
+    return ingredients.map((ingredient) => Ingredient.fromMap(json.decode(ingredient))).toList();
+  }
+
+  List<String> _decodeDirections(List<dynamic> directions) {
+    return directions.map((direction) => direction.toString()).toList();
+  }
+
+  List<String> _encodeIngredients() {
+    return ingredients.map((ingredient) => json.encode(ingredient.toMap())).toList();
   }
 
   Future<bool> checkInDatabase () async {
