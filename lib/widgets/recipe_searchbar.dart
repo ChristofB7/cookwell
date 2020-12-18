@@ -70,10 +70,10 @@ class RecipeSearchBarState extends SearchDelegate<String> {
   @override
   Widget buildSuggestions(BuildContext context) {
     final localRecipesList =
-        query.isEmpty ? localRecipes : DatabaseProvider.searchRecipes(query);
+        query.isEmpty ? localRecipes : DatabaseProvider.searchRecipes(query.toLowerCase());
     final databaseRecipesList = query.isEmpty
         ? dbRecipes
-        : DatabaseProvider.searchFirebaseRecipes(query);
+        : DatabaseProvider.searchFirebaseRecipes(query.toLowerCase());
     return buildLists(localRecipesList, databaseRecipesList, context);
   }
 

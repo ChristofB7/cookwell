@@ -12,7 +12,8 @@ class VerticalRecipesList extends StatelessWidget {
 
   VerticalRecipesList({@required this.header, @required this.list, this.state});
 
-  _navigateAndDisplaySelection(BuildContext context, RecipeMenuState state, Recipe recipe) async {
+  _navigateAndDisplaySelection(
+      BuildContext context, RecipeMenuState state, Recipe recipe) async {
     final result = await Navigator.of(context).pushNamed(
       '/view-recipe',
       arguments: recipe,
@@ -22,26 +23,25 @@ class VerticalRecipesList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Header(header: header),
-        FutureBuilder<List<Recipe>>(
-          future: list,
-          builder:
-              (BuildContext context, AsyncSnapshot<List<Recipe>> snapshot) {
-            return snapshot.hasData
-                ? ListView(
-                shrinkWrap: true,
-                children: snapshot.data
-                    .map((recipe) => GestureDetector(
-                  child: RecipeTile(recipe, context),
-                  onTap: () => _navigateAndDisplaySelection(context, state, recipe),
-                ))
-                    .toList())
-                : SizedBox();
-          },
-        ),
-      ],
+    return FutureBuilder<List<Recipe>>(
+      future: list,
+      builder: (BuildContext context, AsyncSnapshot<List<Recipe>> snapshot) {
+        return snapshot.hasData
+          ? Column(
+              children: [
+                Header(header: header),
+                ListView(
+                    shrinkWrap: true,
+                    children: snapshot.data
+                        .map((recipe) => GestureDetector(
+                              child: RecipeTile(recipe, context),
+                              onTap: () => _navigateAndDisplaySelection(
+                                  context, state, recipe),
+                            )).toList()),
+              ],
+            )
+          : SizedBox();
+      },
     );
   }
 }

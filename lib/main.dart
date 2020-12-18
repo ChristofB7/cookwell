@@ -1,5 +1,6 @@
 import 'package:cookwell/db/db_provider.dart';
 import 'package:cookwell/widgets/add_recipe.dart';
+import 'package:cookwell/widgets/mycookbook.dart';
 import 'package:cookwell/widgets/recipes_menu.dart';
 import 'package:cookwell/widgets/search_recipes.dart';
 import 'package:cookwell/widgets/shopping_menu.dart';
@@ -25,7 +26,8 @@ class MyApp extends StatelessWidget {
         '/view-recipe': (context) => ViewRecipe(),
         '/add-recipe': (context) => AddRecipe(),
         '/all-recipes': (context) => RecipeMenu(),
-        '/search-recipe': (context) => SearchRecipes()
+        '/search-recipe': (context) => SearchRecipes(),
+        '/cookbook-menu': (context) => MyCookbook(),
       },
     );
   }
@@ -77,7 +79,9 @@ class _MyHomePageState extends State<MyHomePage> {
             children: <Widget>[
               navigationItemListTitle(RECIPES, _recipeMenu),
               navigationItemListTitle(SHOPPING, _shoppingMenu),
-              navigationItemListTitle("Search", SearchRecipes())
+              navigationItemListTitle("Search", SearchRecipes()),
+              navigationItemListTitle("MyCookbook", MyCookbook())
+
 
             ],
           ),
@@ -177,8 +181,8 @@ TextTheme _buildTextTheme(TextTheme base) {
 const ColorScheme ColorTheme = ColorScheme(
   primary: prussianBlue,
   primaryVariant: bdazzledBlue,
-  secondary: jasmine,
-  secondaryVariant: honeyYellow,
+  secondary: iceburgBlue,
+  secondaryVariant: columbiaBlue,
   surface: cultured,
   background: white,
   error: errorRed,

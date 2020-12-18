@@ -32,16 +32,19 @@ class ShoppingItem {
   static Future<void> createShoppingList(BuildContext context) async {
     final RenderBox box = context.findRenderObject();
     List<ShoppingItem> list = await DatabaseProvider.getUncheckedItems();
-    String sharableList = "";
+    String sharableList = "Shopping List";
 
-    //TODO: should we add "shopping list" as a title?
+    //TODO: adjustable shopping list header
     if (list != null) {
       for (ShoppingItem item in list) {
         sharableList += item.toString();
       }
       Share.share(sharableList,
-          subject: "Shopping List\n",
           sharePositionOrigin: box.localToGlobal(Offset.zero) & box.size);
     }
+  }
+
+  String toString(){
+    return ("\n${this.item} ${this.quantity == 0 ? "" : "(${this.quantity})"}");
   }
 }
