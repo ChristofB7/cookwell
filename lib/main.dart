@@ -71,43 +71,46 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
-    return Scaffold(
-      drawer: Drawer(
-        child: Container(
-          margin: EdgeInsets.only(top: 20.0),
-          child: Column(
-            children: <Widget>[
-              navigationItemListTitle(RECIPES, _recipeMenu),
-              navigationItemListTitle(SHOPPING, _shoppingMenu),
-              navigationItemListTitle("Search", SearchRecipes()),
-              navigationItemListTitle("MyCookbook", MyCookbook())
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(backgroundColor: colorScheme.background, title: Text(""),),
+        drawer: Drawer(
+          child: Container(
+            margin: EdgeInsets.only(top: 20.0),
+            child: Column(
+              children: <Widget>[
+                navigationItemListTitle(RECIPES, _recipeMenu),
+                navigationItemListTitle(SHOPPING, _shoppingMenu),
+                navigationItemListTitle("Search", SearchRecipes()),
+                navigationItemListTitle("MyCookbook", MyCookbook())
 
 
-            ],
+              ],
+            ),
           ),
         ),
-      ),
-      body: _currentPage,
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        currentIndex: _currentIndex,
-        backgroundColor: colorScheme.primary,
-        selectedItemColor: colorScheme.onPrimary,
-        unselectedItemColor: colorScheme.onPrimary.withOpacity(.60),
-        selectedLabelStyle: textTheme.caption,
-        unselectedLabelStyle: textTheme.caption,
-        onTap: (index) => changeTab(index),
-        items: [
-          BottomNavigationBarItem(
-            // make constant
-            label: RECIPES,
-            icon: Icon(Icons.fastfood_rounded),
-          ),
-          BottomNavigationBarItem(
-            label: SHOPPING,
-            icon: Icon(Icons.list),
-          ),
-        ],
+        body: _currentPage,
+        bottomNavigationBar: BottomNavigationBar(
+          type: BottomNavigationBarType.fixed,
+          currentIndex: _currentIndex,
+          backgroundColor: colorScheme.primary,
+          selectedItemColor: colorScheme.onPrimary,
+          unselectedItemColor: colorScheme.onPrimary.withOpacity(.60),
+          selectedLabelStyle: textTheme.caption,
+          unselectedLabelStyle: textTheme.caption,
+          onTap: (index) => changeTab(index),
+          items: [
+            BottomNavigationBarItem(
+              // make constant
+              label: RECIPES,
+              icon: Icon(Icons.fastfood_rounded),
+            ),
+            BottomNavigationBarItem(
+              label: SHOPPING,
+              icon: Icon(Icons.list),
+            ),
+          ],
+        ),
       ),
     );
   }

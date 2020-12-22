@@ -10,14 +10,16 @@ class RecipeSearchBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
-    return IconButton(
-        icon: Icon(
-          Icons.search,
-          color: colorScheme.primary,
-        ),
-        onPressed: () {
-          showSearch(context: context, delegate: RecipeSearchBarState());
-        });
+    return SafeArea(
+      child: IconButton(
+          icon: Icon(
+            Icons.search,
+            color: colorScheme.primary,
+          ),
+          onPressed: () {
+            showSearch(context: context, delegate: RecipeSearchBarState());
+          }),
+    );
   }
 }
 

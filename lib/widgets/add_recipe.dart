@@ -28,6 +28,6 @@ class _AddRecipeState extends State<AddRecipe> {
   
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return SafeArea(child: Container());
   }
 }

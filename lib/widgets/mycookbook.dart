@@ -10,8 +10,10 @@ class MyCookbook extends StatelessWidget {
   Widget build(BuildContext context) {
     Future<List<Recipe>> localRecipes = DatabaseProvider.getRecipes();
 
-    return Column(children: [
-      VerticalRecipesList(header: "MYCOOKBOOK", list: localRecipes)
-    ],);
+    return SafeArea(
+      child: Column(children: [
+        VerticalRecipesList(header: "MYCOOKBOOK", list: localRecipes)
+      ],),
+    );
   }
 }

@@ -6,6 +6,7 @@ class SearchRecipes extends StatelessWidget {
   // TODO fix back button, & create container maybe?
   Widget build(BuildContext context) {
     showSearch(context: context, delegate: RecipeSearchBarState());
+    return SafeArea();
   }
 }
 
