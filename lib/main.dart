@@ -73,7 +73,6 @@ class _MyHomePageState extends State<MyHomePage> {
     final textTheme = Theme.of(context).textTheme;
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(backgroundColor: colorScheme.background, title: Text(""),),
         drawer: Drawer(
           child: Container(
             margin: EdgeInsets.only(top: 20.0),
