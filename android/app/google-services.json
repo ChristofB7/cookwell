@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "399058485592",
+    "firebase_url": "https://cookwell-aabb2.firebaseio.com",
+    "project_id": "cookwell-aabb2",
+    "storage_bucket": "cookwell-aabb2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:399058485592:android:224ba1589b5940e459a52d",
+        "android_client_info": {
+          "package_name": "cbiz.mg.cookwell"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "399058485592-7qcjdh0eqo4lth4fp3tp1gtnm7jconje.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAyda6MUnZObJCkshyX6S1XPr0BrJ0SC1I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "399058485592-7qcjdh0eqo4lth4fp3tp1gtnm7jconje.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "399058485592-ablvv0a5pk2cvhpq73bmjq39idv1lj5i.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "cbiz.mg.cookwell"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

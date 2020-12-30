@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cookwell/model/recipe.dart';
 import 'package:cookwell/model/shopping_item.dart';
+import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -187,8 +188,14 @@ class DatabaseProvider {
     )
     VALUES (?,?,?,?,?,?,?,?,?,?,?)''';
 
-    final alreadySaved = await checkDBRecipeSaved(recipe.dbId) || await checkRecipeSaved(recipe.id);
-    if (!alreadySaved) await db.rawInsert(sql, recipe.toDynamicList());
+    final alreadySaved = (recipe.dbId!= null ? await checkDBRecipeSaved(recipe.dbId): false) || (recipe.id!= null ? await checkRecipeSaved(recipe.id): false);
+    if (!alreadySaved) {
+      await db.rawInsert(sql, recipe.toDynamicList());
+      print("Added");
+    }
+    else{
+      print("not added");
+    }
     return alreadySaved;
   }
 
