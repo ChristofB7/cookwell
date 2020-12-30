@@ -233,4 +233,9 @@ class DatabaseProvider {
     CollectionReference recipesDatabase = FirebaseFirestore.instance.collection('recipes');
     return await recipesDatabase.where("searchQueries",arrayContains: query).get().then((querySnapshot) => querySnapshot.docs.map((doc) => Recipe.fromDBMap(doc.id, doc.data())).toList());
   }
+
+  static Future<String> getIngredientImage(String ingredient) async {
+    DocumentReference documentReference = FirebaseFirestore.instance.collection('ingredients').doc(ingredient);
+    return await documentReference.get().then((doc) => doc.data()[COLUMN_IMAGE] ?? null);
+  }
 }

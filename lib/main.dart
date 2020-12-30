@@ -71,8 +71,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
-    return SafeArea(
-      child: Scaffold(
+    return Scaffold(
         drawer: Drawer(
           child: Container(
             margin: EdgeInsets.only(top: 20.0),
@@ -88,7 +87,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
         ),
-        body: _currentPage,
+        body: SafeArea(child: _currentPage),
         bottomNavigationBar: BottomNavigationBar(
           type: BottomNavigationBarType.fixed,
           currentIndex: _currentIndex,
@@ -110,7 +109,6 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ],
         ),
-      ),
     );
   }
 

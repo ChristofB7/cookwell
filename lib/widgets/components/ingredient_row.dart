@@ -19,10 +19,18 @@ class IngredientRow extends StatelessWidget {
       children: [
         Padding(
           padding: const EdgeInsets.all(8.0),
-          child: ImageIcon(
-            AssetImage('lib/assets/images/vegetarian.png'),
-            size: 25,
-          ),
+          child: FutureBuilder<String>(
+          future: DatabaseProvider.getIngredientImage(ingredient.name),
+          builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+            return SizedBox(
+              height: 25,
+              width: 25,
+              child: snapshot.hasData ? FadeInImage.assetNetwork(
+                  placeholder: 'lib/assets/images/vegetarian.png',
+                  image: snapshot.data,
+              ) : Image.asset('lib/assets/images/vegetarian.png'),);
+          },
+        ),
         ),
         //Expanded to take up as much space as possible
         Expanded(

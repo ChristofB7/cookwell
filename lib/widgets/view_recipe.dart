@@ -23,65 +23,65 @@ class _ViewRecipeState extends State<ViewRecipe> {
     final textTheme = Theme.of(context).textTheme;
 
     recipe = ModalRoute.of(context).settings.arguments as Recipe;
-    return SafeArea(
-      child: Scaffold(
+    return Scaffold(
         backgroundColor: colorScheme.background,
-        body: CustomScrollView(
-          slivers: <Widget>[
-            SliverAppBar(
-              backgroundColor: colorScheme.primary,
-              leading: Container(),
-              pinned: false,
-              expandedHeight: 210,
-              flexibleSpace: FlexibleSpaceBar(
-                background: _createCard(recipe, colorScheme, context),
+        body: SafeArea(
+          child: CustomScrollView(
+            slivers: <Widget>[
+              SliverAppBar(
+                backgroundColor: colorScheme.primary,
+                leading: Container(),
+                pinned: false,
+                expandedHeight: 210,
+                flexibleSpace: FlexibleSpaceBar(
+                  background: _createCard(recipe, colorScheme, context),
+                ),
               ),
-            ),
-            SliverList(
-              delegate: SliverChildListDelegate(
-                <Widget>[
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // a stack allows us to put the back iconbutton and the favorite icon button ontop of the image
-                      Divider(
-                        color: colorScheme.surface,
-                        thickness: 3,
-                        indent: 40,
-                        endIndent: 40,
-                      ),
-                      Header(header: "INGREDIENTS"),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: recipe.ingredients
-                            .map((ingredient) => IngredientRow(ingredient: ingredient, displayAddButton: true,))
-                            .toList(),
-                      ),
-                      Header(header: "DIRECTIONS"),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: recipe.directions
-                            .asMap()
-                            .entries
-                            .map((direction) => DirectionRow(step: direction.key + 1, direction: direction.value))
-                            .toList(),
-                      ),
-                      Header(header: "NOTES"),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          '${recipe.notes == null ? '\n\n' : recipe.notes}',
-                          style: textTheme.caption,
+              SliverList(
+                delegate: SliverChildListDelegate(
+                  <Widget>[
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // a stack allows us to put the back iconbutton and the favorite icon button ontop of the image
+                        Divider(
+                          color: colorScheme.surface,
+                          thickness: 3,
+                          indent: 40,
+                          endIndent: 40,
                         ),
-                      ),
-                    ],
-                  ),
-                ],
+                        Header(header: "INGREDIENTS"),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: recipe.ingredients
+                              .map((ingredient) => IngredientRow(ingredient: ingredient, displayAddButton: true,))
+                              .toList(),
+                        ),
+                        Header(header: "DIRECTIONS"),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: recipe.directions
+                              .asMap()
+                              .entries
+                              .map((direction) => DirectionRow(step: direction.key + 1, direction: direction.value))
+                              .toList(),
+                        ),
+                        Header(header: "NOTES"),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            '${recipe.notes == null ? '\n\n' : recipe.notes}',
+                            style: textTheme.caption,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
     );
   }
 
