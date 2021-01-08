@@ -1,9 +1,9 @@
 import 'package:cookwell/db/db_provider.dart';
 import 'package:cookwell/model/shopping_item.dart';
 import 'package:flutter/material.dart';
-import 'package:numberpicker/numberpicker.dart';
 
 import 'components/header.dart';
+import 'components/shopping_row.dart';
 
 class ShoppingMenu extends StatefulWidget {
   ShoppingMenu();
@@ -16,18 +16,17 @@ class _ShoppingMenuState extends State<ShoppingMenu> {
   Future<List<ShoppingItem>> checkedList;
   Future<List<ShoppingItem>> uncheckedList;
 
+  FocusNode _newItemFocusNode = FocusNode();
+
   final itemController = TextEditingController();
   final quantityController = TextEditingController();
 
   void _submitData() async {
     final _item = itemController.text;
-    final _quantity = quantityController.text;
 
     if (itemController.text.length > 2) {
-      await DatabaseProvider.addShoppingItem(new ShoppingItem(
-          item: _item,
-          quantity: _quantity.length > 0 ? int.parse(_quantity) : 0,
-          checked: false));
+      await DatabaseProvider.addShoppingItem(
+          ShoppingItem.parseShoppingItem(_item));
 
       setState(() {
         checkedList = DatabaseProvider.getCheckedItems();
@@ -35,7 +34,6 @@ class _ShoppingMenuState extends State<ShoppingMenu> {
       });
 
       itemController.text = '';
-      quantityController.text = '';
     }
   }
 
@@ -49,9 +47,7 @@ class _ShoppingMenuState extends State<ShoppingMenu> {
       showDialog(
         context: context,
         builder: (_) => AlertDialog(
-          title: Text("Delete Checked Items"),
-          content:
-              Text("Are you sure you would like to delete all checked items?"),
+          title: Text("Delete all checked items?"),
           actions: [
             TextButton(
               child: Text('Yes'),
@@ -75,7 +71,6 @@ class _ShoppingMenuState extends State<ShoppingMenu> {
         ),
       );
     }
-
     _reload();
   }
 
@@ -86,168 +81,64 @@ class _ShoppingMenuState extends State<ShoppingMenu> {
     });
   }
 
-  void _openNumberPicker(TextTheme textTheme) {
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: Text(
-          "Quantity",
-          style: textTheme.headline6,
-        ),
-        content: StatefulBuilder(
-          builder: (BuildContext context, StateSetter setState) {
-            return Container(
-              height: 200,
-              child: Center(
-                child: NumberPicker.integer(
-                  initialValue: quantityController.text == ""
-                      ? 0
-                      : int.parse(quantityController.text),
-                  minValue: 0,
-                  maxValue: 10,
-                  onChanged: (newValue) => setState(
-                      () => quantityController.text = newValue.toString()),
-                  selectedTextStyle: textTheme.headline5,
-                  textStyle: textTheme.bodyText1,
-                ),
-              ),
-            );
-          },
-        ),
-        actions: <Widget>[
-          TextButton(
-            child: Text('Ok', style: TextStyle(fontSize: 20),),
-            onPressed: () {
-              Navigator.of(context).pop();
-              setState(() {});
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
-    return Scaffold(
-      backgroundColor: colorScheme.background,
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Header(header: 'MY LIST',
-              icon: IconButton(
-                icon: Icon(
-                  Icons.ios_share,
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
+        backgroundColor: colorScheme.background,
+        body: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Header(
+                header: 'MY LIST',
+                icon: IconButton(
+                  icon: Icon(Icons.ios_share),
+                  onPressed: () => shareShoppingList(context),
                 ),
-                onPressed: () {
-                  shareShoppingList(context);
+              ),
+              FutureBuilder<List<ShoppingItem>>(
+                future: DatabaseProvider.getUncheckedItems(),
+                builder: (BuildContext context,
+                    AsyncSnapshot<List<ShoppingItem>> snapshot) {
+                  return snapshot.hasData
+                      ? Column(
+                          children: snapshot.data
+                              .map((item) => ShoppingItemRow(
+                                  item: item, checked: false, reloadParentState: _reload))
+                              .toList())
+                      : SizedBox();
                 },
               ),
-            ),
-            FutureBuilder<List<ShoppingItem>>(
-              future: DatabaseProvider.getUncheckedItems(),
-              builder: (BuildContext context,
-                  AsyncSnapshot<List<ShoppingItem>> snapshot) {
-                return snapshot.hasData
-                    ? Column(
+              _newItem(colorScheme, textTheme),
+              Header(
+                header: 'COMPLETED',
+                icon: IconButton(
+                  icon: Icon(
+                    Icons.delete,
+                  ),
+                  onPressed: () => _deleteAllChecked(),
+                ),
+              ),
+              FutureBuilder<List<ShoppingItem>>(
+                future: DatabaseProvider.getCheckedItems(),
+                builder: (BuildContext context,
+                    AsyncSnapshot<List<ShoppingItem>> snapshot) {
+                  if (snapshot.hasData) {
+                    return Column(
                         children: snapshot.data
                             .map((item) =>
-                                _buildItem(item, colorScheme, textTheme, false))
-                            .toList())
-                    : SizedBox();
-              },
-            ),
-            _newItem(colorScheme, textTheme),
-            Header(header: 'COMPLETED', icon: IconButton(
-                icon: Icon(
-                  Icons.delete,
-                ),
-                onPressed: () => _deleteAllChecked(),
-              ),
-            ),
-            FutureBuilder<List<ShoppingItem>>(
-              future: DatabaseProvider.getCheckedItems(),
-              builder: (BuildContext context,
-                  AsyncSnapshot<List<ShoppingItem>> snapshot) {
-                if (snapshot.hasData) {
-                  return Column(
-                      children: snapshot.data
-                          .map((item) =>
-                              _buildItem(item, colorScheme, textTheme, true))
-                          .toList());
-                } else {
-                  return SizedBox();
-                }
-              },
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Dismissible _buildItem(ShoppingItem item, ColorScheme colorScheme,
-      TextTheme textTheme, bool checked) {
-    return Dismissible(
-      key: Key(item.item + item.id.toString()),
-      confirmDismiss: (direction) async {
-        if (direction == DismissDirection.endToStart) {
-          setState(() {
-            DatabaseProvider.deleteShoppingItem(item);
-          });
-          return true;
-        } else
-          return false;
-      },
-      direction: DismissDirection.endToStart,
-      onDismissed: (direction) {
-        setState(() {
-          DatabaseProvider.deleteShoppingItem(item);
-          checkedList = DatabaseProvider.getCheckedItems();
-          uncheckedList = DatabaseProvider.getUncheckedItems();
-        });
-      },
-      child: InkWell(
-        child: Padding(
-          padding: EdgeInsets.all(0),
-          child: Row(
-            children: <Widget>[
-              Checkbox(
-                value: item.checked,
-                onChanged: (_) {
-                  DatabaseProvider.toggleItem(item);
-                  setState(() {
-                    checkedList = DatabaseProvider.getCheckedItems();
-                    uncheckedList = DatabaseProvider.getUncheckedItems();
-                  });
+                            ShoppingItemRow(
+                                item: item, checked: true, reloadParentState: _reload))
+                            .toList());
+                  } else {
+                    return SizedBox();
+                  }
                 },
-                activeColor: colorScheme.primary,
-                checkColor: colorScheme.primary,
-              ),
-              Expanded(
-                child: Row(
-                  children: [
-                    Text(
-                      "${item.item} ",
-                      style: TextStyle(
-                          fontSize: 14,
-                          decoration:
-                              checked ? TextDecoration.lineThrough : null),
-                    ),
-                    Text(
-                      item.quantity != 0 ? "(${item.quantity})" : "",
-                      style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          decoration:
-                              checked ? TextDecoration.lineThrough : null),
-                    ),
-                  ],
-                ),
               ),
             ],
           ),
@@ -262,6 +153,7 @@ class _ShoppingMenuState extends State<ShoppingMenu> {
         side: BorderSide(color: colorScheme.secondary, width: 1),
         borderRadius: BorderRadius.circular(10),
       ),
+      shadowColor: Color(0x00000000),
       child: ListTile(
         leading: IconButton(
           icon: Icon(Icons.add),
@@ -273,32 +165,14 @@ class _ShoppingMenuState extends State<ShoppingMenu> {
           children: [
             Flexible(
               child: TextField(
-                controller: itemController,
-                onSubmitted: (_) => _submitData,
-                decoration: InputDecoration(
-                  labelText: 'New Item',
-                ),
-              ),
-            ),
-            FlatButton(
-              color: Colors.white,
-              textColor: colorScheme.primary,
-              padding: EdgeInsets.all(8.0),
-              onPressed: () => _openNumberPicker(textTheme),
-              child: quantityController.text == ""
-                  ? Text(
-                      "QUANTITY",
-                      style: TextStyle(fontSize: 12.0),
-                    )
-                  : quantityController.text == "0"
-                      ? Text(
-                          "QUANTITY",
-                          style: TextStyle(fontSize: 12.0),
-                        )
-                      : Text(
-                          quantityController.text,
-                          style: TextStyle(fontSize: 20.0),
-                        ),
+                  controller: itemController,
+                  decoration: InputDecoration(
+                    labelText: 'New Item',
+                  ),
+                  textInputAction: TextInputAction.done,
+                  focusNode: _newItemFocusNode,
+                  onSubmitted: (_) => _submitData,
+                  onEditingComplete: _submitData),
             ),
           ],
         ),

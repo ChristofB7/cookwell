@@ -18,6 +18,11 @@ class RecipeTile extends StatelessWidget {
     final totalTime = recipe.cookingTime.inMinutes + recipe.prepTime.inMinutes;
 
     return Card(
+      shape: RoundedRectangleBorder(
+        side: BorderSide(color: colorScheme.secondary, width: 1),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      shadowColor: Color(0x00000000),
       margin: EdgeInsets.symmetric(vertical: 3, horizontal: 5),
       child: ListTile(
         tileColor: colorScheme.background,

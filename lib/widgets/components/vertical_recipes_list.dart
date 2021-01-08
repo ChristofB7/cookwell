@@ -23,6 +23,7 @@ class VerticalRecipesList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return FutureBuilder<List<Recipe>>(
       future: list,
       builder: (BuildContext context, AsyncSnapshot<List<Recipe>> snapshot) {

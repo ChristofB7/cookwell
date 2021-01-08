@@ -47,4 +47,16 @@ class ShoppingItem {
   String toString(){
     return ("\n${this.item} ${this.quantity == 0 ? "" : "(${this.quantity})"}");
   }
+
+  static ShoppingItem parseShoppingItem(String input) {
+    List inputs = input.split(' ');
+
+    if (num.tryParse(inputs[0]) != null) {
+      String item = inputs.sublist(1).join(' ').trim();
+      int amount = num.tryParse(inputs[0]).toInt();
+      return ShoppingItem(item: item, quantity: amount, checked: false);
+    } else {
+      return ShoppingItem(item: input, quantity: 0, checked: false);
+    }
+  }
 }
