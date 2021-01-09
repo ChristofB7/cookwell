@@ -70,7 +70,15 @@ class _ViewRecipeState extends State<ViewRecipe> {
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Text(
-                            '${recipe.notes == null ? '\n\n' : recipe.notes}',
+                            '${recipe.notes == "" ? '\n\n' : recipe.notes}',
+                            style: textTheme.caption,
+                          ),
+                        ),
+                        Header(header: "SOURCE"),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            '${recipe.source == "" ? '\n\n' : recipe.source}',
                             style: textTheme.caption,
                           ),
                         ),

@@ -20,19 +20,21 @@ class Recipe {
   num servingSize;
   List<String> categories;
   String notes = "";
+  String source = "";
   bool saved;
 
   Recipe(
       {this.id,
-        @required this.name,
+      @required this.name,
       @required this.ingredients,
       @required this.directions,
-      this.image,
-      this.cookingTime,
-      this.prepTime,
-      this.servingSize,
+      @required this.image,
+      @required this.cookingTime,
+      @required this.prepTime,
+      @required this.servingSize,
       this.categories,
       this.notes,
+      this.source,
       this.saved});
 
   Map<String, dynamic> toMap() =>{
@@ -46,6 +48,7 @@ class Recipe {
     DatabaseProvider.COLUMN_PREPTIME: prepTime.inMinutes,
     DatabaseProvider.COLUMN_SERVINGSIZE: servingSize,
     DatabaseProvider.COLUMN_NOTES: notes,
+    DatabaseProvider.COLUMN_SOURCE: source,
     DatabaseProvider.COLUMN_SAVED: 1,
   };
 
@@ -60,6 +63,7 @@ class Recipe {
     prepTime = Duration(minutes: map[DatabaseProvider.COLUMN_PREPTIME]);
     servingSize = map[DatabaseProvider.COLUMN_SERVINGSIZE];
     notes = map[DatabaseProvider.COLUMN_NOTES];
+    source = map[DatabaseProvider.COLUMN_SOURCE];
     saved = map[DatabaseProvider.COLUMN_SAVED] == 1;
   }
 
@@ -73,6 +77,7 @@ class Recipe {
     prepTime = Duration(minutes: map[DatabaseProvider.COLUMN_PREPTIME]);
     servingSize = map[DatabaseProvider.COLUMN_SERVINGSIZE];
     notes = map[DatabaseProvider.COLUMN_NOTES];
+    source = map[DatabaseProvider.COLUMN_SOURCE];
     checkSaved();
     _encodeImage(map[DatabaseProvider.COLUMN_IMAGE]);
   }
@@ -89,6 +94,7 @@ class Recipe {
       prepTime.inMinutes,
       servingSize,
       notes,
+      source,
       1];
   }
 

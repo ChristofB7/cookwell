@@ -81,8 +81,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 navigationItemListTitle(SHOPPING, _shoppingMenu),
                 navigationItemListTitle("Search", SearchRecipes()),
                 navigationItemListTitle("MyCookbook", MyCookbook())
-
-
               ],
             ),
           ),

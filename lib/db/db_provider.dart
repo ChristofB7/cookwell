@@ -29,6 +29,7 @@ class DatabaseProvider {
   static const COLUMN_PREPTIME = "prepTime";
   static const COLUMN_SERVINGSIZE = "servingSize";
   static const COLUMN_NOTES = "notes";
+  static const COLUMN_SOURCE = "source";
   static const COLUMN_SAVED = "saved";
 
   Future<String> getDatabasePath(String dbName) async {
@@ -70,6 +71,7 @@ class DatabaseProvider {
           $COLUMN_PREPTIME INTEGER,
           $COLUMN_SERVINGSIZE REAL,
           $COLUMN_NOTES TEXT, 
+          $COLUMN_SOURCE TEXT,
           $COLUMN_SAVED INTEGER
           )
           ''');
@@ -184,9 +186,10 @@ class DatabaseProvider {
       $COLUMN_PREPTIME,
       $COLUMN_SERVINGSIZE,
       $COLUMN_NOTES,
+      $COLUMN_SOURCE,
       $COLUMN_SAVED
     )
-    VALUES (?,?,?,?,?,?,?,?,?,?,?)''';
+    VALUES (?,?,?,?,?,?,?,?,?,?,?,?)''';
 
     final alreadySaved = (recipe.dbId!= null ? await checkDBRecipeSaved(recipe.dbId): false) || (recipe.id!= null ? await checkRecipeSaved(recipe.id): false);
     if (!alreadySaved) {
