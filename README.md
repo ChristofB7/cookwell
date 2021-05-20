@@ -1,16 +1,7 @@
 # cookwell
+This innovative long term project is a recipe manager that will be released for Android and iOS.
+It is developed in Android Stuido and XCode using Flutter and Dart.
+Flutter and Dart is a great way to make beautiful apps quickly and will ultimately allow for the relase on all mobile devices.
+THe goal with the project is to make something that can store my own recipes and allow others to do the same.
 
-A new Flutter application.
-
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Monetization will be an option - for those who want premium features - we will not bombard you with ads, and promotions. Our goal is to make something that we want to use - not to make money.
